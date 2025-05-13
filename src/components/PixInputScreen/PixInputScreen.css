@@ -51,7 +51,6 @@ html {
   z-index: 0;
 }
 
-/* INPUT COM LABEL FLOTANTE */
 .floating-label-input {
   position: relative;
   width: 100%;
@@ -68,6 +67,13 @@ html {
   outline: none;
   background: transparent;
   color: black;
+  user-select: none;
+}
+
+.floating-label-input input:focus {
+  border-bottom: 2px solid #007bff;
+  background-color: transparent;
+  outline: none;
 }
 
 .floating-label-input label {
@@ -87,17 +93,15 @@ html {
   color: #007bff;
 }
 
-.floating-label-input input:focus {
-  border-bottom: 2px solid #007bff;
-}
-
 .clipboard-icon {
   position: absolute;
   margin-top: 80px;
+  margin-bottom: -10px;
   right: 0;
   bottom: 12px;
   font-size: 18px;
   color: gray;
+  cursor: pointer;
 }
 
 .pix-subtext {
