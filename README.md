@@ -50,7 +50,6 @@ Com o crescimento do uso do Pix no Brasil, também aumentaram os golpes e fraude
 - **PostgreSQL** (armazenamento)
 - **Docker** + Docker Compose (orquestração)
 - **JSON + HTTP REST**
-- **React** (Interface)
 
 ---
 

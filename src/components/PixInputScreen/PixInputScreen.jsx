@@ -1,7 +1,28 @@
 import "./PixInputScreen.css";
 import { FiCopy } from "react-icons/fi";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function PixInputScreen() {
+  const [pixKey, setPixKey] = useState("");
+  const [copied, setCopied] = useState(false); 
+  const navigate = useNavigate();
+
+  const handleContinue = () => {
+    if (pixKey.trim()) {
+      navigate("/valor");
+    }
+  };
+
+  const handleCopy = () => {
+    if (pixKey.trim()) {
+      navigator.clipboard.writeText(pixKey).then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000); 
+      });
+    }
+  };
+
   return (
     <div className="pix-container">
       <div className="pix-header">
@@ -25,11 +46,27 @@ function PixInputScreen() {
 
       <div className="pix-body">
         <div className="floating-label-input">
-          <input type="text" id="pixKey" required placeholder=" " />
+          <input
+            type="text"
+            id="pixKey"
+            value={pixKey}
+            onChange={(e) => setPixKey(e.target.value)}
+            required
+            placeholder=" "
+            autoComplete="on"
+            className={pixKey ? "has-value" : ""}
+          />
+
           <label htmlFor="pixKey">Digitar ou colar nome/chave</label>
-          <span className="clipboard-icon">
-            <FiCopy size={20} color="gray" />
-          </span>
+          {pixKey.trim() &&(
+           <span
+             className="clipboard-icon"
+             onClick={handleCopy}
+             style={{ cursor: "pointer" }}
+           >
+             <FiCopy size={20} color={copied ? "green" : "gray"} />
+           </span>
+          )}
         </div>
 
         <p className="pix-subtext">
@@ -38,7 +75,13 @@ function PixInputScreen() {
       </div>
 
       <div className="pix-footer">
-        <button className="pix-button">Continuar</button>
+        <button
+          className="pix-button"
+          onClick={handleContinue}
+          disabled={!pixKey.trim()}
+        >
+          Continuar
+        </button>
       </div>
     </div>
   );
