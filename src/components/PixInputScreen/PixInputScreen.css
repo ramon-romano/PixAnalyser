@@ -17,7 +17,6 @@ body {
   background-color: white;
 }
 
-
 .pix-header {
   position: relative;
   overflow: hidden;
@@ -28,7 +27,6 @@ body {
   padding: 0 20px;
   box-sizing: border-box;
 }
-
 
 .pix-gradient {
   background: linear-gradient(to bottom, #d00080, #f00000);
@@ -66,7 +64,6 @@ body {
   display: block;
   overflow: hidden;
 }
-
 
 .floating-label-input {
   position: relative;

@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 function PixInputScreen() {
   const [pixKey, setPixKey] = useState("");
-  const [copied, setCopied] = useState(false); 
+  const [copied, setCopied] = useState(false);
   const navigate = useNavigate();
 
   const handleContinue = () => {
@@ -18,7 +18,7 @@ function PixInputScreen() {
     if (pixKey.trim()) {
       navigator.clipboard.writeText(pixKey).then(() => {
         setCopied(true);
-        setTimeout(() => setCopied(false), 2000); 
+        setTimeout(() => setCopied(false), 2000);
       });
     }
   };
@@ -58,14 +58,14 @@ function PixInputScreen() {
           />
 
           <label htmlFor="pixKey">Digitar ou colar nome/chave</label>
-          {pixKey.trim() &&(
-           <span
-             className="clipboard-icon"
-             onClick={handleCopy}
-             style={{ cursor: "pointer" }}
-           >
-             <FiCopy size={20} color={copied ? "green" : "gray"} />
-           </span>
+          {pixKey.trim() && (
+            <span
+              className="clipboard-icon"
+              onClick={handleCopy}
+              style={{ cursor: "pointer" }}
+            >
+              <FiCopy size={20} color={copied ? "green" : "gray"} />
+            </span>
           )}
         </div>
 
