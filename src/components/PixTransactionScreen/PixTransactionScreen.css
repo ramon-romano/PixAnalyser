@@ -18,13 +18,26 @@ html {
 
 .pix-header {
   position: relative;
+  overflow: hidden;
+  background: linear-gradient(
+    to bottom,
+    #6A0080 0%,
+    #6A0080 45%,
+    #6A0080 48%,
+    #8B008B 62%,
+    #CC092F 70%,
+    #CC092F 100%
+  );
+  overflow: visible;
+  z-index: 0;
 }
 
 .header-content {
-  background: linear-gradient(to bottom, #d00080, #f00000);
+  padding: 100px 20px 60px;
+  background: transparent;
   color: white;
-  padding: 60px 20px 80px;
   position: relative;
+  z-index: 2;
 }
 
 h1 {
@@ -66,7 +79,10 @@ h1 {
   left: 0;
   width: 100%;
   height: 60px;
-  z-index: 0;
+  z-index: 1;
+  pointer-events: none;
+  transform: translateX(100px);
+  overflow: hidden;
 }
 
 .pix-body {
@@ -84,10 +100,8 @@ h1 {
 .repeat-button,
 .continue-button,
 .cancel-button {
-  color: #333; /* ou #333, se quiser um pouco mais claro */
+  color: #333;
 }
-
-
 
 .recipient-info-card {
   background-color: #ffffff;
@@ -97,6 +111,9 @@ h1 {
   display: flex;
   gap: 12px;
   align-items: center;
+  margin-top: -5px;
+  position: relative;
+  z-index: 10;
 }
 
 .icon-container {
@@ -120,10 +137,15 @@ h1 {
   color: #999;
 }
 
+.amount-section {
+   margin-top: 6px;
+}
+
 .amount-label {
   font-weight: bold;
-  font-size: 14px;
-  margin-bottom: 6px;
+  font-size: 24px;
+  margin-bottom: 12px;
+  display: block;
 }
 
 .amount-input {
@@ -195,33 +217,93 @@ h1 {
 .balance-value {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px; /* menos espaço entre valor e botão */
+}
+
+.balance-text {
+  background-color: #ccc; /* cinza */
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: inline-block;
 }
 
 .eye-button {
   background: none;
   border: none;
   cursor: pointer;
-  color: #666;
+  color: #007bff;
   font-size: 18px;
 }
 
+.eye-button:focus:not(:focus-visible) {
+  outline: none;
+}
+
 .schedule-section {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-top: 20px;
+  font-size: 16px;
+  color: #333;
+}
+
+.schedule-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .schedule-label {
+  font-weight: 600;
+  font-size: 14px;
+  color: #888;
+  margin-bottom: 4px;
+}
+
+.schedule-date {
   font-weight: bold;
+  font-size: 16px;
+  color: #888;
+}
+
+.repeat-wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.calendar-emoji {
+  font-size: 16px;
+  line-height: 1;
 }
 
 .repeat-button {
   background: none;
   border: none;
-  color: #666;
-  font-weight: bold;
+  padding: 0;
+  margin: 0;
+  font-size: 14px;
+  color: #007bff;
+  text-decoration: underline;
   cursor: pointer;
+  line-height: 1;
+}
+
+.repeat-button:focus {
+  outline: none;
+  border: none;
+  box-shadow: none;
+}
+
+
+.calendar-icon {
+  margin-left: 6px;
+  font-size: 16px;
 }
 
 .action-buttons {
@@ -255,10 +337,8 @@ h1 {
 }
 
 .hidden-balance {
-  background-color: #f2f2f2;
-  border-radius: 6px;
-  padding: 4px 8px;
-  font-weight: bold;
-  user-select: none;
+  color: transparent;      /* texto invisível */
+  user-select: none;       /* impede copiar o texto */
+  pointer-events: none;    /* opcional, para evitar interação */
+  text-shadow: none;       /* remove sombras, se houver */
 }
-

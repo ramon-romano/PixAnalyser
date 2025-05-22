@@ -24,11 +24,40 @@ function PixTransactionScreen() {
               Horários, limites e outras informações
             </Link>
           </div>
-
-          <svg className="wave" viewBox="0 0 1440 320" preserveAspectRatio="none">
-            <path fill="#ffffff" d="M0,160 C480,320 960,0 1440,160 L1440,320 L0,320 Z" />
-          </svg>
         </div>
+
+<svg
+  className="wave"
+  viewBox="0 0 1440 120"
+  preserveAspectRatio="none"
+  xmlns="http://www.w3.org/2000/svg"
+  style={{
+    position: "absolute",
+    bottom: "-50px",
+    left: 0,
+    width: "100%",
+    height: "100px",
+    transform: "rotate(180deg)",
+    zIndex: 1,
+    pointerEvents: "none",
+  }}
+>
+
+  <path
+    d="M0,35 Q720,-20 1440,42 L1440,120 L0,120 Z"
+    fill="rgba(227, 60, 79, 0.5)"
+  />
+
+  <path
+    d="M0,40 A900,40 0 0,0 1440,40 L1440,120 L0,120 Z"
+    fill="#CC092F"
+  />
+
+</svg>
+
+
+
+
       </div>
 
       <div className="pix-body">
@@ -81,7 +110,7 @@ function PixTransactionScreen() {
           <div className="balance-label">Saldo disponível:</div>
           <div className="balance-value">
             <span className={`balance-text ${!showBalance ? "hidden-balance" : ""}`}>
-              {showBalance ? "R$ 1.234,56" : "••••••"}
+              R$ 1.234,56
             </span>
             <button onClick={toggleBalanceVisibility} className="eye-button">
               {showBalance ? <FaEye /> : <FaEyeSlash />}
@@ -90,12 +119,13 @@ function PixTransactionScreen() {
         </section>
 
         <section className="schedule-section">
-          <div className="schedule-label">Pra quando?</div>
-          <div className="schedule-details">
-            <span className="schedule-date">30/04/2025</span>
-            <button type="button" className="repeat-button">
-              Repetir <span className="calendar-icon">🗓️</span>
-            </button>
+          <div className="schedule-info">
+            <div className="schedule-label">Pra quando?</div>
+            <div className="schedule-date">30/04/2025</div>
+          </div>
+          <div class="repeat-wrapper">
+            <button class="repeat-button">Repetir</button>
+            <span class="calendar-emoji">📅</span>
           </div>
         </section>
 
