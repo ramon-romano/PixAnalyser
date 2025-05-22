@@ -6,7 +6,7 @@ html {
   background-color: #ffffff;
 }
 
-.pix-container {
+.pixContainer {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -15,16 +15,28 @@ html {
   background-color: white;
 }
 
-
-.pix-header {
+.pixHeader {
   position: relative;
+  overflow: hidden;
+  background: linear-gradient(
+    to bottom,
+    #8b008b 0%,
+    #8b008b 45%,
+    #9e006e 52%,
+    #b1123a 60%,
+    #cc092f 70%,
+    #cc092f 100%
+  );
+  overflow: visible;
+  z-index: 0;
 }
 
-.header-content {
-  background: linear-gradient(to bottom, #d00080, #f00000);
+.headerContent {
+  padding: 100px 20px 60px;
+  background: transparent;
   color: white;
-  padding: 60px 20px 80px;
   position: relative;
+  z-index: 2;
 }
 
 h1 {
@@ -34,7 +46,7 @@ h1 {
   margin-top: -38px;
 }
 
-.back-button {
+.backButton {
   color: white;
   font-size: 24px;
   position: absolute;
@@ -42,7 +54,7 @@ h1 {
   left: 20px;
 }
 
-.info-bar {
+.infoBar {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -51,11 +63,11 @@ h1 {
   color: white;
 }
 
-.info-bar .info-icon {
+.infoIcon {
   margin-right: 6px;
 }
 
-.info-link {
+.infoLink {
   color: #ffe0ff;
   text-decoration: underline;
 }
@@ -66,40 +78,32 @@ h1 {
   left: 0;
   width: 100%;
   height: 60px;
-  z-index: 0;
+  z-index: 1;
+  pointer-events: none;
+  transform: translateX(100px);
+  overflow: hidden;
 }
 
-.pix-body {
+.pixBody {
   color: #222;
 }
 
-.recipient-name,
-.recipient-id,
-.recipient-institution,
-.amount-label,
-.balance-label,
-.balance-value,
-.schedule-label,
-.schedule-date,
-.repeat-button,
-.continue-button,
-.cancel-button {
-  color: #333; /* ou #333, se quiser um pouco mais claro */
-}
-
-
-
-.recipient-info-card {
+.recipientInfoCard {
   background-color: #ffffff;
-  padding: 16px;
-  border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  padding: 18px 20px;
+  border-radius: 14px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
   display: flex;
-  gap: 12px;
+  gap: 14px;
   align-items: center;
+  margin: -25px auto 0 auto; /* Sobe levemente sobre o header */
+  position: relative;
+  z-index: 5;
+  width: 88%;
+  max-width: 300px;
 }
 
-.icon-container {
+.iconContainer {
   background-color: #d8f8e2;
   color: #00b37e;
   font-weight: bold;
@@ -108,7 +112,7 @@ h1 {
   border-radius: 50%;
 }
 
-.recipient-details p {
+.recipientDetails p {
   margin: 2px 0;
 }
 
@@ -120,13 +124,18 @@ h1 {
   color: #999;
 }
 
-.amount-label {
-  font-weight: bold;
-  font-size: 14px;
-  margin-bottom: 6px;
+.amountSection {
+  margin-top: 6px;
 }
 
-.amount-input {
+.amountLabel {
+  font-weight: bold;
+  font-size: 24px;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.amountInput {
   width: 100%;
   padding: 14px 0 6px;
   font-size: 18px;
@@ -136,27 +145,26 @@ h1 {
   color: #222;
   outline: none;
   box-shadow: none;
-  transition: border-color 0.3s ease;
-  transition: border-bottom-color 0.3s ease;
+  transition: border-color 0.3s ease, border-bottom-color 0.3s ease;
 }
 
-.amount-input:focus {
-  border-bottom: 2px solid #000000; /* Azul ao focar */
+.amountInput:focus {
+  border-bottom: 2px solid #000000;
 }
 
-.amount-input::-webkit-inner-spin-button,
-.amount-input::-webkit-outer-spin-button {
+.amountInput::-webkit-inner-spin-button,
+.amountInput::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
-.quick-amount-scroll {
+.quickAmountScroll {
   overflow-x: auto;
   width: 100%;
   padding-bottom: 10px;
 }
 
-.quick-amount-buttons {
+.quickAmountButtons {
   display: flex;
   gap: 10px;
   overflow-x: auto;
@@ -165,7 +173,7 @@ h1 {
   scroll-behavior: smooth;
 }
 
-.quick-amount-buttons button {
+.quickAmountButtons button {
   direction: ltr;
   white-space: nowrap;
   background-color: white;
@@ -178,59 +186,118 @@ h1 {
   flex-shrink: 0;
 }
 
-.quick-amount-buttons button:hover {
+.quickAmountButtons button:hover {
   background-color: #e6f0ff;
 }
 
-.balance-section {
+.balanceSection {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.balance-label {
+.balanceLabel {
   font-weight: bold;
 }
 
-.balance-value {
+.balanceValue {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
 }
 
-.eye-button {
+.balanceText {
+  background-color: #ccc;
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.eyeButton {
   background: none;
   border: none;
   cursor: pointer;
-  color: #666;
+  color: #007bff;
   font-size: 18px;
 }
 
-.schedule-section {
+.eyeButton:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.scheduleSection {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-top: 20px;
+  font-size: 16px;
+  color: #333;
 }
 
-.schedule-label {
+.scheduleInfo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.scheduleLabel {
+  font-weight: 600;
+  font-size: 14px;
+  color: #888;
+  margin-bottom: 4px;
+}
+
+.scheduleDate {
   font-weight: bold;
+  font-size: 16px;
+  color: #888;
 }
 
-.repeat-button {
+.repeatWrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.calendarEmoji {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.repeatButton {
   background: none;
   border: none;
-  color: #666;
-  font-weight: bold;
+  padding: 0;
+  margin: 0;
+  font-size: 14px;
+  color: #007bff;
+  text-decoration: underline;
   cursor: pointer;
+  line-height: 1;
 }
 
-.action-buttons {
+.repeatButton:focus {
+  outline: none;
+  border: none;
+  box-shadow: none;
+}
+
+.calendarIcon {
+  margin-left: 6px;
+  font-size: 16px;
+}
+
+.actionButtons {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-.continue-button {
+.continueButton {
   background-color: #ccc;
   color: white;
   padding: 14px;
@@ -242,11 +309,11 @@ h1 {
   cursor: pointer;
 }
 
-.continue-button:enabled {
-  background-color: #d00080;
+.continueButton:enabled {
+  background-color: #cc092f ;
 }
 
-.cancel-button {
+.cancelButton {
   background: none;
   border: none;
   color: #007bff;
@@ -254,11 +321,11 @@ h1 {
   cursor: pointer;
 }
 
-.hidden-balance {
-  background-color: #f2f2f2;
-  border-radius: 6px;
-  padding: 4px 8px;
-  font-weight: bold;
-  user-select: none;
-}
 
+
+.hiddenBalance {
+  color: transparent;
+  user-select: none;
+  pointer-events: none;
+  text-shadow: none;
+}
