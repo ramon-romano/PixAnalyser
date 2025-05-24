@@ -143,12 +143,18 @@ function PixTransactionScreen() {
         </section>
 
         <div className={styles.actionButtons}>
-          <button
-            className={styles.continueButton}
-            disabled={Number(amount) <= 0}
+          <Link
+            to="/conta"
+            className={`${styles.continueButton} ${
+              Number(amount) <= 0 ? styles.disabled : ""
+            }`}
+            onClick={(e) => {
+              if (Number(amount) <= 0) e.preventDefault();
+            }}
           >
             Continuar
-          </button>
+          </Link>
+
           <button className={styles.cancelButton}>Cancelar</button>
         </div>
       </div>
