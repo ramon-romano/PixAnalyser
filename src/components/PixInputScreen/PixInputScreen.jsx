@@ -1,4 +1,4 @@
-import "./PixInputScreen.css";
+import styles from "./PixInputScreen.module.css";
 import { FiCopy } from "react-icons/fi";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -24,28 +24,43 @@ function PixInputScreen() {
   };
 
   return (
-    <div className="pix-container">
-      <div className="pix-header">
-        <div className="pix-gradient">
-          <span className="back-arrow">←</span>
+    <div className={styles.pixContainer}>
+      <div className={styles.pixHeader}>
+        <div className={styles.pixGradient}>
+          <span className={styles.backArrow}>←</span>
           <h1>Como você quer transferir?</h1>
 
           <svg
             className="wave"
-            viewBox="0 0 1440 320"
+            viewBox="0 0 1440 120"
             preserveAspectRatio="none"
             xmlns="http://www.w3.org/2000/svg"
+            style={{
+              position: "absolute",
+              bottom: "-50px",
+              left: 0,
+              width: "100%",
+              height: "100px",
+              transform: "rotate(180deg)",
+              zIndex: 1,
+              pointerEvents: "none",
+            }}
           >
             <path
-              fill="#ffffff"
-              d="M0,160 C480,320 960,0 1440,160 L1440,320 L0,320 Z"
+              d="M0,35 Q720,-20 1440,45 L1440,120 L0,120 Z"
+              fill="rgba(227, 60, 79, 0.5)"
+            />
+
+            <path
+              d="M0,40 A900,40 0 0,0 1440,40 L1440,120 L0,120 Z"
+              fill="#CC092F"
             />
           </svg>
         </div>
       </div>
 
-      <div className="pix-body">
-        <div className="floating-label-input">
+      <div className={styles.pixBody}>
+        <div className={styles.floatingLabelInput}>
           <input
             type="text"
             id="pixKey"
@@ -60,7 +75,7 @@ function PixInputScreen() {
           <label htmlFor="pixKey">Digitar ou colar nome/chave</label>
           {pixKey.trim() && (
             <span
-              className="clipboard-icon"
+              className={styles.clipboardIcon}
               onClick={handleCopy}
               style={{ cursor: "pointer" }}
             >
@@ -69,14 +84,14 @@ function PixInputScreen() {
           )}
         </div>
 
-        <p className="pix-subtext">
+        <p className={styles.pixSubtext}>
           Pode ser o nome do contato ou uma chave Pix
         </p>
       </div>
 
-      <div className="pix-footer">
+      <div className={styles.pixFooter}>
         <button
-          className="pix-button"
+          className={styles.pixButton}
           onClick={handleContinue}
           disabled={!pixKey.trim()}
         >
