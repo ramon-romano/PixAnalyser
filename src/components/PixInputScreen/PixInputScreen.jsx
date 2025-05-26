@@ -27,7 +27,7 @@ function PixInputScreen() {
     <div className={styles.pixContainer}>
       <div className={styles.pixHeader}>
         <div className={styles.pixGradient}>
-          <span className={styles.backArrow}>←</span>
+          <span className={styles.backArrow}>&lt;</span>
           <h1>Como você quer transferir?</h1>
 
           <svg
@@ -46,21 +46,21 @@ function PixInputScreen() {
               pointerEvents: "none",
             }}
           >
-           <g transform="translate(70, 0)" >
+            <g transform="translate(70, 0)">
+              <path
+                d="M0,150 Q720,-150 1440,175 L1440,120 L0,120 Z"
+                fill="rgba(227, 60, 79, 0.3)"
+              />
+            </g>
+            <g transform="translate(300, 0)">
+              <path
+                d="M0,155 Q720,-120 1440,130 L1440,120 L0,120 Z"
+                fill="rgba(227, 60, 79, 0.3)"
+              />
+            </g>
             <path
-              d="M0,150 Q720,-150 1440,175 L1440,120 L0,120 Z"
-              fill="rgba(227, 60, 79, 0.3)"
-              
-            />
-           </g>
-           <g transform="translate(300, 0)">
-            <path
-              d="M0,155 Q720,-120 1440,130 L1440,120 L0,120 Z"
-              fill="rgba(227, 60, 79, 0.3)"
-            />
-           </g>
-            <path d="M0,29  Q360,-10 720,30  Q1080,70 1440,40  L1440,120  L0,120  Z"
-            fill="rgba(204, 9, 47, 0.97)"
+              d="M0,29  Q360,-10 720,30  Q1080,70 1440,40  L1440,120  L0,120  Z"
+              fill="rgba(204, 9, 47, 0.97)"
             />
           </svg>
         </div>

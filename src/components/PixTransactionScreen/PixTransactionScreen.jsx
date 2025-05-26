@@ -14,7 +14,7 @@ function PixTransactionScreen() {
       <div className={styles.pixHeader}>
         <div className={styles.headerContent}>
           <Link to="/" className={styles.backButton}>
-            <span className={styles.backArrow}>←</span>
+            &lt;
           </Link>
           <h1>Pix</h1>
 
@@ -42,27 +42,27 @@ function PixTransactionScreen() {
             pointerEvents: "none",
           }}
         >
-           <g transform="translate(70, 0)" >
+          <g transform="translate(70, 0)">
             <path
               d="M0,150 Q720,-150 1440,175 L1440,120 L0,120 Z"
               fill="rgba(227, 60, 79, 0.3)"
-              
             />
-           </g>
-           <g transform="translate(300, 0)">
+          </g>
+          <g transform="translate(300, 0)">
             <path
               d="M0,155 Q720,-120 1440,130 L1440,120 L0,120 Z"
               fill="rgba(227, 60, 79, 0.3)"
             />
-           </g>
-            <path d="M0,29  Q360,-10 720,30  Q1080,70 1440,40  L1440,120  L0,120  Z"
+          </g>
+          <path
+            d="M0,29  Q360,-10 720,30  Q1080,70 1440,40  L1440,120  L0,120  Z"
             fill="rgba(204, 9, 47, 0.97)"
-            />
+          />
         </svg>
       </div>
 
       <div className={styles.pixBody}>
-        <div className={styles.pixBodyInner}> 
+        <div className={styles.pixBodyInner}>
           <div className={styles.recipientInfoCard}>
             <div className={styles.iconContainer}>S$</div>
             <div className={styles.recipientDetails}>
@@ -143,31 +143,31 @@ function PixTransactionScreen() {
             </div>
           </section>
 
-            <section className={styles.scheduleSection}>
-              <div className={styles.scheduleInfo}>
-                <div className={styles.scheduleLabel}>Pra quando?</div>
-                <div className={styles.scheduleDate}>30/04/2025</div>
-              </div>
-              <div className={styles.repeatWrapper}>
-                <button className={styles.repeatButton}>Repetir</button>
-                <span className={styles.calendarEmoji}>📅</span>
-              </div>
-            </section>
+          <section className={styles.scheduleSection}>
+            <div className={styles.scheduleInfo}>
+              <div className={styles.scheduleLabel}>Pra quando?</div>
+              <div className={styles.scheduleDate}>30/04/2025</div>
+            </div>
+            <div className={styles.repeatWrapper}>
+              <button className={styles.repeatButton}>Repetir</button>
+              <span className={styles.calendarEmoji}>📅</span>
+            </div>
+          </section>
 
-            <div className={styles.actionButtons}>
-              <Link
-                to="/conta"
-                className={`${styles.continueButton} ${
-                  Number(amount) <= 0 ? styles.disabled : ""
-                }`}
-                onClick={(e) => {
-                  if (Number(amount) <= 0) e.preventDefault();
-                }}
-              >
-                Continuar
-              </Link>
+          <div className={styles.actionButtons}>
+            <Link
+              to="/conta"
+              className={`${styles.continueButton} ${
+                Number(amount) <= 0 ? styles.disabled : ""
+              }`}
+              onClick={(e) => {
+                if (Number(amount) <= 0) e.preventDefault();
+              }}
+            >
+              Continuar
+            </Link>
 
-              <button className={styles.cancelButton}>Cancelar</button>
+            <button className={styles.cancelButton}>Cancelar</button>
           </div>
         </div>
       </div>
