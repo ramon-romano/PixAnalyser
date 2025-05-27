@@ -67,15 +67,11 @@ function PixConfirmationScreen() {
           </div>
           <div className={styles.detailItem}>
             <span className={styles.label}>Chave Pix</span>
-            <span className={`${styles.value} ${styles.blurred}`}>
-              XXX.XXX.XXX-XX
-            </span>
+            <span className={styles.value}>096.XXX.XXX-XX</span>
           </div>
           <div className={styles.detailItem}>
             <span className={styles.label}>CPF/CNPJ</span>
-            <span className={`${styles.value} ${styles.blurred}`}>
-              ***.***.***-**
-            </span>
+            <span className={styles.value}>096.***.***-**</span>
           </div>
           <div className={styles.detailItem}>
             <span className={styles.label}>Instituição</span>
@@ -87,7 +83,9 @@ function PixConfirmationScreen() {
           <label className={styles.checkboxContainer}>
             <input type="checkbox" />
             <span className={styles.checkmark}></span>
-            Adicionar aos contatos Pix
+            <span className={styles.checkboxLabel}>
+              Adicionar aos contatos Pix
+            </span>
           </label>
         </div>
 

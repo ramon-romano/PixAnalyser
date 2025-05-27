@@ -114,16 +114,12 @@ h1 {
 }
 
 .iconContainer {
-  background-color: #e0e0e0;
-  color: #666;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 16px;
+  background-color: #d8f8e2;
+  color: #00b37e;
   font-weight: bold;
+  font-size: 16px;
+  padding: 10px;
+  border-radius: 50%;
 }
 
 .recipientDetails {
