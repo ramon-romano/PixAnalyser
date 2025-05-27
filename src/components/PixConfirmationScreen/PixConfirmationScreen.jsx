@@ -1,19 +1,52 @@
-import React from "react";
+import React, { useState } from "react";
 import styles from "./PixConfirmationScreen.module.css";
-import { Link } from "react-router-dom";
-import { FiFileText } from "react-icons/fi"; // Importe o ícone
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { FiFileText } from "react-icons/fi";
 
 function PixConfirmationScreen() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const dadosPix = location.state?.dados || {};
+  const valor = location.state?.valor || "";
+
+  const handleConfirmar = async () => {
+    setLoading(true);
+    setError("");
+
+    try {
+      const response = await fetch("https://api.seubanco.com/pix/realizar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nome: dadosPix.nome,
+          documento: dadosPix.documento,
+          instituicao: dadosPix.instituicao,
+          valor: Number(valor),
+        }),
+      });
+
+      if (!response.ok) throw new Error("Erro ao processar a transferência");
+
+      const resultado = await response.json();
+
+      navigate("/pix/sucesso", { state: { resultado } });
+    } catch (err) {
+      setError("Não foi possível concluir a transferência. Tente novamente.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className={styles.pixContainer}>
       <div className={styles.pixHeader}>
         <div className={styles.headerContent}>
-          <Link to="/conta" className={styles.backButton}>
-            &lt;
-          </Link>
+          <Link to="/conta" className={styles.backButton}>&lt;</Link>
           <h1>Pix</h1>
         </div>
-
         <h2 className={styles.mainTitle}>Agora, é só confirmar</h2>
 
         <svg
@@ -59,23 +92,27 @@ function PixConfirmationScreen() {
           </div>
           <div className={styles.detailItem}>
             <span className={styles.label}>Nome</span>
-            <span className={styles.value}>Felipe Mariano</span>
+            <span className={styles.value}>{dadosPix.nome}</span>
           </div>
           <div className={styles.detailItem}>
             <span className={styles.label}>Valor</span>
-            <span className={styles.value}>R$ 0,01</span>
+            <span className={styles.value}>R$ {valor}</span>
           </div>
           <div className={styles.detailItem}>
             <span className={styles.label}>Chave Pix</span>
-            <span className={styles.value}>096.XXX.XXX-XX</span>
+            <span className={`${styles.value} ${styles.blurred}`}>
+              {dadosPix.chave || "XXX.XXX.XXX-XX"}
+            </span>
           </div>
           <div className={styles.detailItem}>
             <span className={styles.label}>CPF/CNPJ</span>
-            <span className={styles.value}>096.***.***-**</span>
+            <span className={`${styles.value} ${styles.blurred}`}>
+              {dadosPix.documento || "***.***.***-**"}
+            </span>
           </div>
           <div className={styles.detailItem}>
             <span className={styles.label}>Instituição</span>
-            <span className={styles.value}>PICPAY</span>
+            <span className={styles.value}>{dadosPix.instituicao}</span>
           </div>
         </div>
 
@@ -83,9 +120,7 @@ function PixConfirmationScreen() {
           <label className={styles.checkboxContainer}>
             <input type="checkbox" />
             <span className={styles.checkmark}></span>
-            <span className={styles.checkboxLabel}>
-              Adicionar aos contatos Pix
-            </span>
+            Adicionar aos contatos Pix
           </label>
         </div>
 
@@ -99,7 +134,15 @@ function PixConfirmationScreen() {
           <span className={styles.value}> 30/04/2025 - hoje</span>
         </div>
 
-        <button className={styles.confirmButton}>Confirmar</button>
+        {error && <div className={styles.errorMessage}>{error}</div>}
+
+        <button
+          className={styles.confirmButton}
+          onClick={handleConfirmar}
+          disabled={loading}
+        >
+          {loading ? "Enviando..." : "Confirmar"}
+        </button>
       </div>
     </div>
   );

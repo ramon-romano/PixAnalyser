@@ -8,7 +8,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<PixInputScreen />} />
+        <Route path="/home" element={<PixInputScreen />} />
         <Route path="/valor" element={<PixTransactionScreen />} />
         <Route path="/conta" element={<PixAccountScreen />} />
         <Route path="/confirmar" element={<PixConfirmationScreen />} />

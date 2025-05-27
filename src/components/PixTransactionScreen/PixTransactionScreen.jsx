@@ -1,11 +1,34 @@
 import styles from "./PixTransactionScreen.module.css";
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { FaEye, FaEyeSlash, FaInfoCircle } from "react-icons/fa";
+import api from "../../api/api";
 
 function PixTransactionScreen() {
   const [amount, setAmount] = useState("");
   const [showBalance, setShowBalance] = useState(false);
+  const [pixData, setPixData] = useState(null);
+
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const chavePix = searchParams.get("chavePix");
+
+  useEffect(() => {
+    const buscarDadosPix = async () => {
+      try {
+        const response = await api.post("/buscar-dados", {
+          chave: chavePix,
+        });
+        setPixData(response.data);
+      } catch (error) {
+        console.error("Erro ao buscar dados da chave Pix:", error);
+      }
+    };
+
+    if (chavePix) {
+      buscarDadosPix();
+    }
+  }, [chavePix]);
 
   const toggleBalanceVisibility = () => setShowBalance(!showBalance);
 
@@ -13,7 +36,7 @@ function PixTransactionScreen() {
     <div className={styles.pixContainer}>
       <div className={styles.pixHeader}>
         <div className={styles.headerContent}>
-          <Link to="/" className={styles.backButton}>
+          <Link to="/home" className={styles.backButton}>
             &lt;
           </Link>
           <h1>Pix</h1>
@@ -63,20 +86,24 @@ function PixTransactionScreen() {
 
       <div className={styles.pixBody}>
         <div className={styles.pixBodyInner}>
-          <div className={styles.recipientInfoCard}>
-            <div className={styles.iconContainer}>S$</div>
-            <div className={styles.recipientDetails}>
-              <p className={styles.recipientName}>
-                Pix para: <span className={styles.bold}>Felipe Mariano</span>
-              </p>
-              <p className={styles.recipientId}>
-                CPF/CNPJ: <span className={styles.blurred}>***.***.***-**</span>
-              </p>
-              <p className={styles.recipientInstitution}>
-                Instituição: <span className={styles.blurred}>***</span>
-              </p>
+          {pixData ? (
+            <div className={styles.recipientInfoCard}>
+              <div className={styles.iconContainer}>S$</div>
+              <div className={styles.recipientDetails}>
+                <p className={styles.recipientName}>
+                  Pix para: <span className={styles.bold}>{pixData.nome}</span>
+                </p>
+                <p className={styles.recipientId}>
+                  CPF/CNPJ: <span className={styles.blurred}>{pixData.documento}</span>
+                </p>
+                <p className={styles.recipientInstitution}>
+                  Instituição: <span className={styles.blurred}>{pixData.instituicao}</span>
+                </p>
+              </div>
             </div>
-          </div>
+          ) : (
+            <p>Carregando dados do destinatário...</p>
+          )}
 
           <section className={styles.amountSection}>
             <label htmlFor="amountInput" className={styles.amountLabel}>
@@ -128,9 +155,7 @@ function PixTransactionScreen() {
             <div className={styles.balanceLabel}>Saldo disponível:</div>
             <div className={styles.balanceValue}>
               <span
-                className={`${styles.balanceText} ${
-                  !showBalance ? styles.hiddenBalance : ""
-                }`}
+                className={`${styles.balanceText} ${!showBalance ? styles.hiddenBalance : ""}`}
               >
                 R$ 1.234,56
               </span>
@@ -157,9 +182,7 @@ function PixTransactionScreen() {
           <div className={styles.actionButtons}>
             <Link
               to="/conta"
-              className={`${styles.continueButton} ${
-                Number(amount) <= 0 ? styles.disabled : ""
-              }`}
+              className={`${styles.continueButton} ${Number(amount) <= 0 ? styles.disabled : ""}`}
               onClick={(e) => {
                 if (Number(amount) <= 0) e.preventDefault();
               }}
