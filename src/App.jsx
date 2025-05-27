@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import PixInputScreen from "../src/components/PixInputScreen/PixInputScreen";
 import PixTransactionScreen from "../src/components/PixTransactionScreen/PixTransactionScreen";
 import PixAccountScreen from "../src/components/PixAccountScreen/PixAccountScreen";
-import PixConfirmationScreen from "./components/PixConfirmationScreen/PixConfirmationScreen";
+import PixConfirmationScreen from "../src/components/PixConfirmationScreen/PixConfirmationScreen";
 
 function App() {
   return (
