@@ -74,6 +74,7 @@ body {
   z-index: 0;
   display: block;
   overflow: hidden;
+  
 }
 
 .floatingLabelInput {
@@ -151,7 +152,7 @@ body {
 .pixButton {
   width: 100%;
   padding: 15px 0;
-  background-color: #cc092f;
+  background-color: red;
   color: white;
   font-weight: bold;
   font-size: 16px;

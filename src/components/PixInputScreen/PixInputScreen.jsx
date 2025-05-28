@@ -2,15 +2,43 @@ import styles from "./PixInputScreen.module.css";
 import { FiCopy } from "react-icons/fi";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { buscarDadosDaChavePix } from "../../api/api";
 
 function PixInputScreen() {
   const [pixKey, setPixKey] = useState("");
   const [copied, setCopied] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  
+  const handleContinue = async () => {
+    const chave = pixKey.trim();
+    if (!chave) return;
+    
+    setLoading(true);
+    setError("");
+    
+    
+    
+    try {
+      const response = await buscarDadosDaChavePix(chave, 3);
+      const dados = response.data.body;
 
-  const handleContinue = () => {
-    if (pixKey.trim()) {
-      navigate("/valor");
+      
+      console.log(response)
+      if (dados && dados.originClientName) {
+        console.log("Dados da chave:", dados);
+        localStorage.setItem('dados', JSON.stringify(dados));
+        navigate("/valor", { state: { dados } });
+
+      } else {
+        setError("Chave Pix inválida ou não encontrada.");
+      }
+    } catch (err) {
+      console.error("Erro ao buscar chave:", err);
+      setError("Erro ao consultar a chave. Tente novamente.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -22,6 +50,7 @@ function PixInputScreen() {
       });
     }
   };
+
 
   return (
     <div className={styles.pixContainer}>
@@ -78,7 +107,6 @@ function PixInputScreen() {
             autoComplete="on"
             className={pixKey ? "has-value" : ""}
           />
-
           <label htmlFor="pixKey">Digitar ou colar nome/chave</label>
           {pixKey.trim() && (
             <span
@@ -94,16 +122,22 @@ function PixInputScreen() {
         <p className={styles.pixSubtext}>
           Pode ser o nome do contato ou uma chave Pix
         </p>
+
+        {error && <p style={{ color: "red", marginTop: "10px" }}>{error}</p>}
       </div>
 
       <div className={styles.pixFooter}>
+
+
         <button
           className={styles.pixButton}
           onClick={handleContinue}
-          disabled={!pixKey.trim()}
+          disabled={!pixKey.trim() || loading}
         >
-          Continuar
+          {loading ? "Consultando..." : "Continuar"}
         </button>
+
+        
       </div>
     </div>
   );
