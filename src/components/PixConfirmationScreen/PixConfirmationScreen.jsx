@@ -1,19 +1,69 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./PixConfirmationScreen.module.css";
-import { Link } from "react-router-dom";
-import { FiFileText } from "react-icons/fi"; // Importe o ícone
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { FiFileText } from "react-icons/fi";
 
 function PixConfirmationScreen() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const pixData = JSON.parse(localStorage.getItem("consultaIA") || "{}");
+
+  const dadosPix = location.state?.dadosPix || {};
+  const valor = location.state?.valor || "0,00";
+  const valorNumerico = parseFloat(valor.replace(".", "").replace(",", "."));
+
+  useEffect(() => {
+    if (!location.state || !location.state.valor) {
+      navigate("/valor");
+    }
+  }, [location, navigate]);
+
+  useEffect(() => {
+    if (pixData?.aiAnalyze?.confidenceScore < 0.7) {
+      alert(
+        "Avaliação de confiança baixa. Por favor, só realize a transferência se realmente confiar no destinatário."
+      );
+    }
+  }, []);
+
+  const handleConfirmar = async () => {
+    setLoading(true);
+    setError("");
+
+    try {
+      const response = await consultarAvaliacaoIA(
+        pixData.destinationKeyValue,
+        pixData.originClientId,
+        valorNumerico,
+        "teste"
+      );
+
+      const consultaIA = response.data.body;
+
+      if (consultaIA) {
+        console.log("Dados da chave:", consultaIA);
+        navigate("/home", { state: { dados } });
+      } else {
+        alert("Chave Pix inválida ou não encontrada.");
+      }
+    } catch (err) {
+      console.error("Erro ao buscar chave:", err);
+      alert("Erro ao transferir pix.");
+    }
+  };
+
   return (
     <div className={styles.pixContainer}>
       <div className={styles.pixHeader}>
         <div className={styles.headerContent}>
-          <Link to="/conta" className={styles.backButton}>
+          <Link to="/valor" className={styles.backButton}>
             &lt;
           </Link>
           <h1>Pix</h1>
         </div>
-
         <h2 className={styles.mainTitle}>Agora, é só confirmar</h2>
 
         <svg
@@ -59,23 +109,29 @@ function PixConfirmationScreen() {
           </div>
           <div className={styles.detailItem}>
             <span className={styles.label}>Nome</span>
-            <span className={styles.value}>Felipe Mariano</span>
+            <span className={styles.value}>
+              {pixData.transactionInformation.receiverName}
+            </span>
           </div>
           <div className={styles.detailItem}>
             <span className={styles.label}>Valor</span>
-            <span className={styles.value}>R$ 0,01</span>
+            <span className={styles.value}>R$ {valor}</span>
           </div>
           <div className={styles.detailItem}>
             <span className={styles.label}>Chave Pix</span>
-            <span className={styles.value}>096.XXX.XXX-XX</span>
+            <span className={`${styles.value} ${styles.blurred}`}>
+              {dadosPix.chave || "XXX.XXX.XXX-XX"}
+            </span>
           </div>
           <div className={styles.detailItem}>
             <span className={styles.label}>CPF/CNPJ</span>
-            <span className={styles.value}>096.***.***-**</span>
+            <span className={`${styles.value} ${styles.blurred}`}>
+              {dadosPix.documento || "***.***.***-**"}
+            </span>
           </div>
           <div className={styles.detailItem}>
             <span className={styles.label}>Instituição</span>
-            <span className={styles.value}>PICPAY</span>
+            <span className={styles.value}>{dadosPix.instituicao}</span>
           </div>
         </div>
 
@@ -83,9 +139,7 @@ function PixConfirmationScreen() {
           <label className={styles.checkboxContainer}>
             <input type="checkbox" />
             <span className={styles.checkmark}></span>
-            <span className={styles.checkboxLabel}>
-              Adicionar aos contatos Pix
-            </span>
+            Adicionar aos contatos Pix
           </label>
         </div>
 
@@ -99,7 +153,12 @@ function PixConfirmationScreen() {
           <span className={styles.value}> 30/04/2025 - hoje</span>
         </div>
 
-        <button className={styles.confirmButton}>Confirmar</button>
+        {error && <div className={styles.errorMessage}>{error}</div>}
+
+        <button className={styles.confirmButton}>Continuar</button>
+        <Link to="/home" className={styles.cancelButton}>
+          Cancelar
+        </Link>
       </div>
     </div>
   );

@@ -1,19 +1,91 @@
 import styles from "./PixTransactionScreen.module.css";
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash, FaInfoCircle } from "react-icons/fa";
+import { consultarAvaliacaoIA } from "../../api/api";
 
 function PixTransactionScreen() {
   const [amount, setAmount] = useState("");
   const [showBalance, setShowBalance] = useState(false);
+  const navigate = useNavigate();
+
+  const pixData = JSON.parse(localStorage.getItem("dados") || "[]");
+  console.log(pixData);
+
+  const handleContinue = async () => {
+    const valorNumerico = parseFloat(amount.replace(",", "."));
+    if (isNaN(valorNumerico) || valorNumerico <= 0) {
+      alert("Informe um valor válido.");
+      return;
+    }
+  
+    try {
+      const dadosTransacao = {
+        receiverId: pixData.receiverId,
+        destinationKeyValue: pixData.destinationKeyValue,
+        originClientId: pixData.originClientId,
+        valor: valorNumerico,
+        observacao: "teste",
+      };
+  
+      const response = await consultarAvaliacaoIA(
+        dadosTransacao.destinationKeyValue,
+        dadosTransacao.originClientId,
+        dadosTransacao.valor,
+        dadosTransacao.observacao
+      );
+  
+      const dadosIA = response.data.body;
+  
+      if (dadosIA) {
+        localStorage.setItem("consultaIA", JSON.stringify(dadosIA));
+  
+        navigate("/confirmar", {
+          state: {
+            dadosPix: {
+              chave: dadosTransacao.destinationKeyValue,
+              documento: pixData.taxIdNumber,
+              instituicao: pixData.destinationBank,
+            },
+            valor: amount,
+          },
+        });
+      } else {
+        alert("Chave Pix inválida ou não encontrada.");
+      }
+    } catch (err) {
+      console.error("Erro ao buscar chave:", err);
+      alert("Erro ao consultar IA.");
+    }
+  };
 
   const toggleBalanceVisibility = () => setShowBalance(!showBalance);
+
+  const formatAmount = (valor) => {
+    const valorAtual = parseFloat(amount.replace(",", ".")) || 0;
+    const novoValor = (valorAtual + valor).toFixed(2).replace(".", ",");
+    setAmount(novoValor);
+  };
+
+  const maskTaxId = (value) => {
+    const digits = value.replace(/\D/g, "");
+
+    if (digits.length === 11) {
+      // CPF: ***.456.789-**
+      return `***.${digits.slice(3, 6)}.${digits.slice(6, 9)}-**`;
+    } else if (digits.length === 14) {
+      // CNPJ: **.***.456/2796-**
+      return `**.***.${digits.slice(5, 8)}/${digits.slice(8, 12)}-**`;
+    }
+
+    return value;
+  };
 
   return (
     <div className={styles.pixContainer}>
       <div className={styles.pixHeader}>
         <div className={styles.headerContent}>
-          <Link to="/" className={styles.backButton}>
+          <Link to="/home" className={styles.backButton}>
             &lt;
           </Link>
           <h1>Pix</h1>
@@ -63,20 +135,31 @@ function PixTransactionScreen() {
 
       <div className={styles.pixBody}>
         <div className={styles.pixBodyInner}>
-          <div className={styles.recipientInfoCard}>
-            <div className={styles.iconContainer}>S$</div>
-            <div className={styles.recipientDetails}>
-              <p className={styles.recipientName}>
-                Pix para: <span className={styles.bold}>Felipe Mariano</span>
-              </p>
-              <p className={styles.recipientId}>
-                CPF/CNPJ: <span className={styles.blurred}>***.***.***-**</span>
-              </p>
-              <p className={styles.recipientInstitution}>
-                Instituição: <span className={styles.blurred}>***</span>
-              </p>
+          {pixData ? (
+            <div className={styles.recipientInfoCard}>
+              <div className={styles.iconContainer}>S$</div>
+              <div className={styles.recipientDetails}>
+                <p className={styles.recipientName}>
+                  Pix para:{" "}
+                  <span className={styles.bold}>{pixData.receiverName}</span>
+                </p>
+                <p className={styles.recipientId}>
+                  CPF/CNPJ:{" "}
+                  <span className={styles.blurred}>
+                    {maskTaxId(pixData.taxIdNumber)}
+                  </span>
+                </p>
+                <p className={styles.recipientInstitution}>
+                  Instituição:{" "}
+                  <span className={styles.blurred}>
+                    {pixData.destinationBank}
+                  </span>
+                </p>
+              </div>
             </div>
-          </div>
+          ) : (
+            <p>Carregando dados do destinatário...</p>
+          )}
 
           <section className={styles.amountSection}>
             <label htmlFor="amountInput" className={styles.amountLabel}>
@@ -86,38 +169,38 @@ function PixTransactionScreen() {
             <div className={styles.amountInputWrapper}>
               <span className={styles.currencyPrefix}>R$</span>
               <input
-                type="number"
+                type="text"
                 id="amountInput"
                 className={styles.amountInput}
                 placeholder="0,00"
                 value={amount}
-                onChange={(e) => setAmount(e.target.value)}
+                onChange={(e) => {
+                  let raw = e.target.value;
+
+                  raw = raw.replace(/[^\d,]/g, "");
+                  const parts = raw.split(",");
+                  if (parts.length > 2) return;
+
+                  if (parts[1]?.length > 2) {
+                    parts[1] = parts[1].slice(0, 2);
+                  }
+
+                  setAmount(parts.join(","));
+                }}
               />
             </div>
             <div className={styles.quickAmountScroll}>
               <div className={styles.quickAmountButtons}>
-                <button
-                  type="button"
-                  onClick={() => setAmount((Number(amount) || 0) + 1)}
-                >
+                <button type="button" onClick={() => formatAmount(1)}>
                   + R$ 1
                 </button>
-                <button
-                  type="button"
-                  onClick={() => setAmount((Number(amount) || 0) + 10)}
-                >
+                <button type="button" onClick={() => formatAmount(10)}>
                   + R$ 10
                 </button>
-                <button
-                  type="button"
-                  onClick={() => setAmount((Number(amount) || 0) + 50)}
-                >
+                <button type="button" onClick={() => formatAmount(50)}>
                   + R$ 50
                 </button>
-                <button
-                  type="button"
-                  onClick={() => setAmount((Number(amount) || 0) + 100)}
-                >
+                <button type="button" onClick={() => formatAmount(100)}>
                   + R$ 100
                 </button>
               </div>
@@ -132,7 +215,12 @@ function PixTransactionScreen() {
                   !showBalance ? styles.hiddenBalance : ""
                 }`}
               >
-                R$ 1.234,56
+                {showBalance
+                  ? `R$ ${Number(pixData.balance).toLocaleString("pt-BR", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}`
+                  : ""}
               </span>
               <button
                 onClick={toggleBalanceVisibility}
@@ -155,19 +243,12 @@ function PixTransactionScreen() {
           </section>
 
           <div className={styles.actionButtons}>
-            <Link
-              to="/conta"
-              className={`${styles.continueButton} ${
-                Number(amount) <= 0 ? styles.disabled : ""
-              }`}
-              onClick={(e) => {
-                if (Number(amount) <= 0) e.preventDefault();
-              }}
-            >
+            <button className={styles.continueButton} onClick={handleContinue}>
               Continuar
+            </button>
+            <Link to="/home" className={styles.cancelButton}>
+              Cancelar
             </Link>
-
-            <button className={styles.cancelButton}>Cancelar</button>
           </div>
         </div>
       </div>
