@@ -4,16 +4,17 @@ const api = axios.create({
   baseURL: 'https://felipemariano.com.br/api/pix-analyzer/transferencia/pix',
 });
 
-export const buscarDadosDaChavePix = (chavePix) => {
-  return api.post('/buscar-chave', { chavePix });
+export const buscarDadosDaChavePix = (destinationKeyValue, originClientId) => {
+  return api.post('/info-chave-pix', { destinationKeyValue, originClientId });
 };
 
-export const consultarAvaliacaoIA = (chavePix) => {
-  return api.post('/avaliacao-ia', { chavePix });
+export const consultarAvaliacaoIA = (destinationKeyValue, originClientId, amount, description) => {
+  return api.post('/analisar', { destinationKeyValue, originClientId, amount, description });
 };
 
-export const realizarTransferenciaPix = (chavePix, valor, usuario) => {
-  return api.post('/transferir', { chavePix, valor, usuario });
+export const realizarTransferenciaPix = (destinationKeyValue, originClientId, amount, description) => {
+  return api.post('/transferir', { destinationKeyValue, originClientId, amount, description });
 };
 
 export default api;
+
