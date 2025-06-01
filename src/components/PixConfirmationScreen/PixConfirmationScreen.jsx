@@ -12,8 +12,16 @@ function PixConfirmationScreen() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showBanner, setShowBanner] = useState(false);
+
   const descricao = location.state?.descricao || "";
+
+  const dadosPix = location.state?.dadosPix || {};
   const valor = location.state?.valor || "0,00";
+  const valorNumerico = parseFloat(valor.replace(".", "").replace(",", "."));
+
+  const pixData = JSON.parse(localStorage.getItem("consultaIA") || "{}");
+
+
   const getDataAtualFormatada = () => {
     const data = new Date();
     const dia = String(data.getDate()).padStart(2, "0");
@@ -30,6 +38,7 @@ function PixConfirmationScreen() {
   console.log(pixData.transactionInformation.receiverName);
 
   const dadosPix = location.state?.dadosPix || {};
+
 
   useEffect(() => {
     if (!location.state || !location.state.valor) {
@@ -65,6 +74,7 @@ function PixConfirmationScreen() {
 
       if (success.statusCodeValue === 200) {
         navigate("/sucesso", { state: { dados: dadosPix } });
+
       } else {
         setError(
           resultadoTransferencia?.message || "Erro ao realizar a transferência."
@@ -78,6 +88,30 @@ function PixConfirmationScreen() {
     }
   };
 
+  // Função para mascarar CPF/CNPJ parcialmente
+  const maskTaxId = (value) => {
+    const digits = value.replace(/\D/g, "");
+
+    if (digits.length === 11) {
+      // CPF: ***.456.789-**
+      return `***.${digits.slice(3, 6)}.${digits.slice(6, 9)}-**`;
+    } else if (digits.length === 14) {
+      // CNPJ: **.***.456/2796-**
+      return `**.***.${digits.slice(5, 8)}/${digits.slice(8, 12)}-**`;
+    }
+
+    return value;
+  };
+
+  // Função para mascarar a chave Pix — mostra só os 3 primeiros caracteres
+  const maskPixKey = (value) => {
+    if (!value) return "Chave não informada";
+    const visibleChars = 3;
+    const maskedLength = value.length - visibleChars;
+    if (maskedLength <= 0) return value;
+    return value.slice(0, visibleChars) + "*".repeat(maskedLength);
+  };
+
   return (
     <div className={styles.pixContainer}>
       <div className={styles.pixHeader}>
@@ -86,8 +120,8 @@ function PixConfirmationScreen() {
             <IoIosArrowBack />
           </Link>
           <h1>Pix</h1>
+          <h2 className={styles.mainTitle}>Agora, é só confirmar</h2>
         </div>
-        <h2 className={styles.mainTitle}>Agora, é só confirmar</h2>
 
         <svg
           className={styles.wave}
@@ -130,31 +164,32 @@ function PixConfirmationScreen() {
             <FiFileText size={20} color="#777" style={{ marginRight: 8 }} />
             <span>Dados da transação</span>
           </div>
-          <div className={styles.detailItem}>
-            <span className={styles.label}>Nome</span>
-            <span className={styles.value}>
-              {pixData.transactionInformation.receiverName}
+
+          <div className={styles.pixDetailItem}>
+            <span className={styles.pixLabel}>Nome</span>
+            <span className={styles.pixValue}>
+              {pixData.transactionInformation?.receiverName}
             </span>
           </div>
-          <div className={styles.detailItem}>
-            <span className={styles.label}>Valor</span>
-            <span className={styles.value}>R$ {valor}</span>
+          <div className={styles.pixDetailItem}>
+            <span className={styles.pixLabel}>Valor</span>
+            <span className={styles.pixValue}>R$ {valor}</span>
           </div>
-          <div className={styles.detailItem}>
-            <span className={styles.label}>Chave Pix</span>
-            <span className={`${styles.value} ${styles.blurred}`}>
-              {dadosPix.chave || "XXX.XXX.XXX-XX"}
+          <div className={styles.pixDetailItem}>
+            <span className={styles.pixLabel}>Chave Pix</span>
+            <span className={`${styles.pixValue} ${styles.blurred}`}>
+              {maskPixKey(dadosPix.chave)}
             </span>
           </div>
-          <div className={styles.detailItem}>
-            <span className={styles.label}>CPF/CNPJ</span>
-            <span className={`${styles.value} ${styles.blurred}`}>
-              {dadosPix.documento || "***.***.***-**"}
+          <div className={styles.pixDetailItem}>
+            <span className={styles.pixLabel}>CPF/CNPJ</span>
+            <span className={`${styles.pixValue} ${styles.blurred}`}>
+              {maskTaxId(dadosPix.documento) || "***.***.***-**"}
             </span>
           </div>
-          <div className={styles.detailItem}>
-            <span className={styles.label}>Instituição</span>
-            <span className={styles.value}>{dadosPix.instituicao}</span>
+          <div className={styles.pixDetailItem}>
+            <span className={styles.pixLabel}>Instituição</span>
+            <span className={styles.pixValue}>{dadosPix.instituicao}</span>
           </div>
         </div>
 
@@ -171,25 +206,27 @@ function PixConfirmationScreen() {
           <p>{descricao || "Nenhuma observação foi inserida."}</p>
         </div>
 
-        <div className={styles.paymentMethod}>
-          <span className={styles.label}>Debitar de</span>
-          <span className={styles.value}> Conta-Poupança</span>
+        <div className={styles.pixPaymentMethod}>
+          <span className={styles.pixLabel}>Debitar de</span>
+          <span className={styles.pixValue}> Conta-Poupança</span>
         </div>
 
-        <div className={styles.paymentDate}>
-          <span className={styles.label}>Data do débito</span>
-          <span className={styles.value}> {getDataAtualFormatada()}</span>
+        <div className={styles.pixPaymentDate}>
+          <span className={styles.pixLabel}>Data do débito</span>
+          <span className={styles.pixValue}>{getDataAtualFormatada()}</span>
         </div>
 
         {error && <div className={styles.errorMessage}>{error}</div>}
 
-        <button className={styles.confirmButton} onClick={handleConfirmar}>
-          Continuar
+        <button className={styles.confirmButton} onClick={handleConfirmar} disabled={loading}>
+          {loading ? "Processando..." : "Continuar"}
         </button>
+
         <Link to="/home" className={styles.cancelButton}>
           Cancelar
         </Link>
       </div>
+
       {showBanner && (
         <AlertBanner
           message="Alerta: Individuo suspeito detectado!! Aconselhamos que prossiga, apenas se confiar no individuo."
