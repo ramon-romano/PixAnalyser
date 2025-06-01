@@ -49,8 +49,23 @@ function PixInputScreen() {
     setLoading(true);
     setError("");
 
+    const requestTransaction = {
+      destinationKeyValue: chaveLimpa,
+      originClientId: 3,
+      amount: null,
+      description: null,
+    };
+    localStorage.setItem(
+      "requestTransaction",
+      JSON.stringify(requestTransaction)
+    );
+
     try {
-      const response = await buscarDadosDaChavePix(chaveLimpa, 3);
+      const response = await buscarDadosDaChavePix(
+        requestTransaction.destinationKeyValue,
+        requestTransaction.originClientId
+      );
+
       const dados = response.data.body;
 
       if (dados && dados.originClientName) {

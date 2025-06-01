@@ -9,6 +9,10 @@ import { IoShareOutline } from "react-icons/io5";
 import styles from "./PixSuccessfulScreen.module.css";
 
 function PixSuccessfulScreen() {
+  const requestTransaction = JSON.parse(
+    localStorage.getItem("requestTransaction") || "[]"
+  );
+
   return (
     <div className={styles["pix-container"]}>
       <div className={styles["pix-header"]}>
@@ -34,7 +38,7 @@ function PixSuccessfulScreen() {
         <div className={styles["info-area"]}>
           <h2 className={styles["info-title"]}>Pix concluído</h2>
           <p className={styles["info-description"]}>
-            Deu tudo certo com a transação de R$ 0,01.
+            Deu tudo certo com a transação de R$ {requestTransaction.amount}.
           </p>
         </div>
 

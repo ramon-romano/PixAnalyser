@@ -4,7 +4,7 @@ import { IoIosArrowBack } from "react-icons/io";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import AlertBanner from "../AlertBanner/AlertBanner";
 import { FiFileText } from "react-icons/fi";
-import { consultarAvaliacaoIA } from "../../api/api";
+import { realizarTransferenciaPix } from "../../api/api";
 
 function PixConfirmationScreen() {
   const location = useLocation();
@@ -13,20 +13,23 @@ function PixConfirmationScreen() {
   const [error, setError] = useState("");
   const [showBanner, setShowBanner] = useState(false);
   const descricao = location.state?.descricao || "";
+  const valor = location.state?.valor || "0,00";
   const getDataAtualFormatada = () => {
     const data = new Date();
     const dia = String(data.getDate()).padStart(2, "0");
-    const mes = String(data.getMonth() + 1).padStart(2, "0"); // mês começa do 0
+    const mes = String(data.getMonth() + 1).padStart(2, "0");
     const ano = data.getFullYear();
-
     return `${dia}/${mes}/${ano}`;
   };
 
   const pixData = JSON.parse(localStorage.getItem("consultaIA") || "{}");
+  const requestTransaction = JSON.parse(
+    localStorage.getItem("requestTransaction") || "{}"
+  );
+
+  console.log(pixData.transactionInformation.receiverName);
 
   const dadosPix = location.state?.dadosPix || {};
-  const valor = location.state?.valor || "0,00";
-  const valorNumerico = parseFloat(valor.replace(".", "").replace(",", "."));
 
   useEffect(() => {
     if (!location.state || !location.state.valor) {
@@ -40,29 +43,38 @@ function PixConfirmationScreen() {
     }
   }, []);
 
+  console.log(pixData);
+
   const handleConfirmar = async () => {
     setLoading(true);
     setError("");
 
     try {
-      const response = await consultarAvaliacaoIA(
-        pixData.destinationKeyValue,
-        pixData.originClientId,
-        valorNumerico,
-        pixData.observacao
+      const response = await realizarTransferenciaPix(
+        requestTransaction.destinationKeyValue,
+        requestTransaction.originClientId,
+        requestTransaction.amount,
+        requestTransaction.description
       );
 
-      const consultaIA = response.data.body;
+      const resultadoTransferencia = response.data.body;
 
-      if (consultaIA) {
-        console.log("Dados da chave:", consultaIA);
-        navigate("/sucesso", { state: { dados } });
+      const success = response.data;
+
+      console.log("Ola", success);
+
+      if (success.statusCodeValue === 200) {
+        navigate("/sucesso", { state: { dados: dadosPix } });
       } else {
-        alert("Chave Pix inválida ou não encontrada.");
+        setError(
+          resultadoTransferencia?.message || "Erro ao realizar a transferência."
+        );
       }
     } catch (err) {
-      console.error("Erro ao buscar chave:", err);
-      alert("Erro ao transferir pix.");
+      console.error("Erro ao transferir pix:", err);
+      setError("Erro ao realizar a transferência.");
+    } finally {
+      setLoading(false);
     }
   };
 
