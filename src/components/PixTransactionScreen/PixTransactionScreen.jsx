@@ -1,5 +1,6 @@
 import styles from "./PixTransactionScreen.module.css";
 import React, { useState } from "react";
+import { IoIosArrowBack } from "react-icons/io";
 import { Link, useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash, FaInfoCircle } from "react-icons/fa";
 import { consultarAvaliacaoIA } from "../../api/api";
@@ -8,6 +9,15 @@ function PixTransactionScreen() {
   const [amount, setAmount] = useState("");
   const [showBalance, setShowBalance] = useState(false);
   const navigate = useNavigate();
+  const [descricao, setDescricao] = useState("");
+  const getDataAtualFormatada = () => {
+    const data = new Date();
+    const dia = String(data.getDate()).padStart(2, "0");
+    const mes = String(data.getMonth() + 1).padStart(2, "0"); // mês começa do 0
+    const ano = data.getFullYear();
+
+    return `${dia}/${mes}/${ano}`;
+  };
 
   const pixData = JSON.parse(localStorage.getItem("dados") || "[]");
   console.log(pixData);
@@ -18,28 +28,28 @@ function PixTransactionScreen() {
       alert("Informe um valor válido.");
       return;
     }
-  
+
     try {
       const dadosTransacao = {
         receiverId: pixData.receiverId,
         destinationKeyValue: pixData.destinationKeyValue,
         originClientId: pixData.originClientId,
         valor: valorNumerico,
-        observacao: "teste",
+        observacao: descricao,
       };
-  
+
       const response = await consultarAvaliacaoIA(
         dadosTransacao.destinationKeyValue,
         dadosTransacao.originClientId,
         dadosTransacao.valor,
         dadosTransacao.observacao
       );
-  
+
       const dadosIA = response.data.body;
-  
+
       if (dadosIA) {
         localStorage.setItem("consultaIA", JSON.stringify(dadosIA));
-  
+
         navigate("/confirmar", {
           state: {
             dadosPix: {
@@ -48,6 +58,7 @@ function PixTransactionScreen() {
               instituicao: pixData.destinationBank,
             },
             valor: amount,
+            descricao: descricao,
           },
         });
       } else {
@@ -86,7 +97,7 @@ function PixTransactionScreen() {
       <div className={styles.pixHeader}>
         <div className={styles.headerContent}>
           <Link to="/home" className={styles.backButton}>
-            &lt;
+            <IoIosArrowBack />
           </Link>
           <h1>Pix</h1>
 
@@ -234,12 +245,26 @@ function PixTransactionScreen() {
           <section className={styles.scheduleSection}>
             <div className={styles.scheduleInfo}>
               <div className={styles.scheduleLabel}>Pra quando?</div>
-              <div className={styles.scheduleDate}>30/04/2025</div>
+              <div className={styles.scheduleDate}>
+                {getDataAtualFormatada()}
+              </div>
             </div>
             <div className={styles.repeatWrapper}>
               <button className={styles.repeatButton}>Repetir</button>
               <span className={styles.calendarEmoji}>📅</span>
             </div>
+          </section>
+
+          <section className={styles.descriptionSection}>
+            <label className={styles.descriptionLabel}>
+              Descrição (opcional)
+            </label>
+            <textarea
+              className={styles.descriptionInput}
+              placeholder="Digite uma observação sobre o Pix"
+              value={descricao}
+              onChange={(e) => setDescricao(e.target.value)}
+            />
           </section>
 
           <div className={styles.actionButtons}>

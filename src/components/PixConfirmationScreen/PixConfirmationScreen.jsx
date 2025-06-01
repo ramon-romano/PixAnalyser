@@ -1,13 +1,26 @@
 import React, { useState, useEffect } from "react";
 import styles from "./PixConfirmationScreen.module.css";
+import { IoIosArrowBack } from "react-icons/io";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import AlertBanner from "../AlertBanner/AlertBanner";
 import { FiFileText } from "react-icons/fi";
+import { consultarAvaliacaoIA } from "../../api/api";
 
 function PixConfirmationScreen() {
   const location = useLocation();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showBanner, setShowBanner] = useState(false);
+  const descricao = location.state?.descricao || "";
+  const getDataAtualFormatada = () => {
+    const data = new Date();
+    const dia = String(data.getDate()).padStart(2, "0");
+    const mes = String(data.getMonth() + 1).padStart(2, "0"); // mês começa do 0
+    const ano = data.getFullYear();
+
+    return `${dia}/${mes}/${ano}`;
+  };
 
   const pixData = JSON.parse(localStorage.getItem("consultaIA") || "{}");
 
@@ -23,9 +36,7 @@ function PixConfirmationScreen() {
 
   useEffect(() => {
     if (pixData?.aiAnalyze?.confidenceScore < 0.7) {
-      alert(
-        "Avaliação de confiança baixa. Por favor, só realize a transferência se realmente confiar no destinatário."
-      );
+      setShowBanner(true);
     }
   }, []);
 
@@ -38,14 +49,14 @@ function PixConfirmationScreen() {
         pixData.destinationKeyValue,
         pixData.originClientId,
         valorNumerico,
-        "teste"
+        pixData.observacao
       );
 
       const consultaIA = response.data.body;
 
       if (consultaIA) {
         console.log("Dados da chave:", consultaIA);
-        navigate("/home", { state: { dados } });
+        navigate("/sucesso", { state: { dados } });
       } else {
         alert("Chave Pix inválida ou não encontrada.");
       }
@@ -60,7 +71,7 @@ function PixConfirmationScreen() {
       <div className={styles.pixHeader}>
         <div className={styles.headerContent}>
           <Link to="/valor" className={styles.backButton}>
-            &lt;
+            <IoIosArrowBack />
           </Link>
           <h1>Pix</h1>
         </div>
@@ -143,6 +154,11 @@ function PixConfirmationScreen() {
           </label>
         </div>
 
+        <div className={styles.descriptionConfirm}>
+          <span>Observação:</span>
+          <p>{descricao || "Nenhuma observação foi inserida."}</p>
+        </div>
+
         <div className={styles.paymentMethod}>
           <span className={styles.label}>Debitar de</span>
           <span className={styles.value}> Conta-Poupança</span>
@@ -150,16 +166,24 @@ function PixConfirmationScreen() {
 
         <div className={styles.paymentDate}>
           <span className={styles.label}>Data do débito</span>
-          <span className={styles.value}> 30/04/2025 - hoje</span>
+          <span className={styles.value}> {getDataAtualFormatada()}</span>
         </div>
 
         {error && <div className={styles.errorMessage}>{error}</div>}
 
-        <button className={styles.confirmButton}>Continuar</button>
+        <button className={styles.confirmButton} onClick={handleConfirmar}>
+          Continuar
+        </button>
         <Link to="/home" className={styles.cancelButton}>
           Cancelar
         </Link>
       </div>
+      {showBanner && (
+        <AlertBanner
+          message="Alerta: Individuo suspeito detectado!! Aconselhamos que prossiga, apenas se confiar no individuo."
+          onClose={() => setShowBanner(false)}
+        />
+      )}
     </div>
   );
 }
