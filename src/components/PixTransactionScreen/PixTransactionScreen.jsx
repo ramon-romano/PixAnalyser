@@ -21,7 +21,10 @@ function PixTransactionScreen() {
   };
 
   const pixData = JSON.parse(localStorage.getItem("dados") || "[]");
-  console.log(pixData);
+  const requestTransaction = JSON.parse(
+    localStorage.getItem("requestTransaction") || "[]"
+  );
+  console.log(requestTransaction);
 
   const handleContinue = async () => {
     // Converter o valor formatado em número float
@@ -30,21 +33,20 @@ function PixTransactionScreen() {
       alert("Informe um valor válido.");
       return;
     }
+    requestTransaction.amount = valorNumerico;
+    requestTransaction.description = descricao;
+
+    localStorage.setItem(
+      "requestTransaction",
+      JSON.stringify(requestTransaction)
+    );
 
     try {
-      const dadosTransacao = {
-        receiverId: pixData.receiverId,
-        destinationKeyValue: pixData.destinationKeyValue,
-        originClientId: pixData.originClientId,
-        valor: valorNumerico,
-        observacao: descricao,
-      };
-
       const response = await consultarAvaliacaoIA(
-        dadosTransacao.destinationKeyValue,
-        dadosTransacao.originClientId,
-        dadosTransacao.valor,
-        dadosTransacao.observacao
+        requestTransaction.destinationKeyValue,
+        requestTransaction.originClientId,
+        requestTransaction.amount,
+        requestTransaction.description
       );
 
       const dadosIA = response.data.body;
@@ -55,12 +57,12 @@ function PixTransactionScreen() {
         navigate("/confirmar", {
           state: {
             dadosPix: {
-              chave: dadosTransacao.destinationKeyValue,
+              chave: requestTransaction.destinationKeyValue,
               documento: pixData.taxIdNumber,
               instituicao: pixData.destinationBank,
             },
-            valor: amount,
-            descricao: descricao,
+            valor: requestTransaction.amount,
+            descricao: requestTransaction.description,
           },
         });
       } else {

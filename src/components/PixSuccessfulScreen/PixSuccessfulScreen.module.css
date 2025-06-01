@@ -71,8 +71,8 @@ body,
 }
 
 .money {
-  width: 70px; /* Ajustado para o tamanho do desenho */
-  height: 40px; /* Ajustado para o tamanho do desenho */
+  width: 70px;
+  height: 40px;
   background-color: #8bc34a; /* Verde claro da nota */
   border: 1px solid #689f38; /* Borda da nota */
   border-radius: 5px;
