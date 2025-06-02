@@ -29,14 +29,12 @@ html {
     #cc092f 100%
   );
   overflow: visible;
-  padding-top: 60px;
-  padding-bottom: 80px;
+  padding-bottom: 30px;
   z-index: 0;
 }
 
 .headerContent {
   display: flex;
-  height: 100%;
   flex-direction: column;
   padding: 0 20px;
   margin: 0 auto;
@@ -47,11 +45,10 @@ html {
 }
 
 .backButton {
-  position: absolute;
   color: white;
   font-size: 24px;
   text-decoration: none;
-  bottom: 15px;
+  margin-top: 20px;
   display: flex;
   align-items: center;
 }
@@ -65,10 +62,12 @@ h1 {
 
 .mainTitle {
   color: white;
+  margin-top: 15px;
+  margin-bottom: 20px;
+  margin-left: 20px;
   font-size: 24px;
   font-weight: bold;
   text-align: left;
-  margin: 30px 0 0 20px;
 }
 
 .wave {
@@ -90,13 +89,13 @@ h1 {
   display: flex;
   gap: 14px;
   align-items: center;
-  margin: -45px auto 0 auto;
+  margin: -55px auto 0 auto; /* Aumentei ainda mais a margem superior negativa */
   position: relative;
   z-index: 5;
-  width: 80%;
-  max-width: 300px;
+  width: 80%; /* Diminuí a largura */
+  max-width: 300px; /* Diminuí a largura máxima */
   flex-direction: column;
-  transform: translateY(30px);
+  transform: translateY(30px); /* Deslocamento vertical de 15px */
 }
 
 .transactionDetails {
@@ -112,7 +111,11 @@ h1 {
   font-weight: bold;
 }
 
-.pixDetailItem {
+.detailsHeader svg {
+  margin-right: 8px;
+}
+
+.detailItem {
   display: flex;
   justify-content: space-between;
   padding: 10px 0;
@@ -121,15 +124,15 @@ h1 {
   width: 100%;
 }
 
-.pixDetailItem:last-child {
+.detailItem:last-child {
   border-bottom: none;
 }
 
-.pixLabel {
+.detailItem .label {
   color: #777;
 }
 
-.pixValue {
+.detailItem .value {
   color: #333;
   font-weight: 500;
 }
@@ -141,6 +144,9 @@ h1 {
   margin-bottom: 15px;
   cursor: pointer;
   font-size: 16px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
   user-select: none;
   color: #555;
 }
@@ -190,19 +196,21 @@ h1 {
   height: 12px;
   border: solid white;
   border-width: 0 3px 3px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
   transform: rotate(45deg);
 }
 
-.pixPaymentMethod,
-.pixPaymentDate {
+.paymentMethod,
+.paymentDate {
   padding: 10px 0;
   color: #555;
   font-size: 16px;
   width: 100%;
 }
 
-.pixPaymentMethod .pixValue,
-.pixPaymentDate .pixValue {
+.paymentMethod .value,
+.paymentDate .value {
   font-weight: 500;
   color: #333;
 }
@@ -224,13 +232,8 @@ h1 {
   background-color: #9e0202;
 }
 
-.cancelButton {
-  display: block;
-  text-align: center;
-  margin-top: 10px;
-  color: #cc092f;
-  font-weight: bold;
-  text-decoration: none;
+.navigationBar {
+  display: none;
 }
 
 .options {

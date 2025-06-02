@@ -10,7 +10,6 @@ function PixTransactionScreen() {
   const [showBalance, setShowBalance] = useState(false);
   const navigate = useNavigate();
   const [descricao, setDescricao] = useState("");
-
   const getDataAtualFormatada = () => {
     const data = new Date();
     const dia = String(data.getDate()).padStart(2, "0");
@@ -27,8 +26,7 @@ function PixTransactionScreen() {
   console.log(requestTransaction);
 
   const handleContinue = async () => {
-    // Converter o valor formatado em número float
-    const valorNumerico = parseFloat(amount.replace(/\./g, "").replace(",", "."));
+    const valorNumerico = parseFloat(amount.replace(",", "."));
     if (isNaN(valorNumerico) || valorNumerico <= 0) {
       alert("Informe um valor válido.");
       return;
@@ -77,7 +75,7 @@ function PixTransactionScreen() {
   const toggleBalanceVisibility = () => setShowBalance(!showBalance);
 
   const formatAmount = (valor) => {
-    const valorAtual = parseFloat(amount.replace(/\./g, "").replace(",", ".")) || 0;
+    const valorAtual = parseFloat(amount.replace(",", ".")) || 0;
     const novoValor = (valorAtual + valor).toFixed(2).replace(".", ",");
     setAmount(novoValor);
   };
@@ -94,42 +92,6 @@ function PixTransactionScreen() {
     }
 
     return value;
-  };
-
-  // Função que formata o valor para padrão brasileiro (com pontos e vírgula)
-  const formatReal = (value) => {
-    if (!value) return "";
-    const numericValue = value.replace(/\D/g, ""); // só números
-    if (!numericValue) return "";
-
-    // Converter para número com centavos
-    let intValue = parseInt(numericValue, 10);
-
-    // O valor está em centavos, então divide por 100
-    let formatted = (intValue / 100).toLocaleString("pt-BR", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    });
-
-    return formatted;
-  };
-
-  // Quando o usuário digita, atualiza o estado com formatação em tempo real
-  const handleAmountChange = (e) => {
-    let input = e.target.value;
-
-    // Remove tudo que não for número
-    input = input.replace(/\D/g, "");
-
-    if (!input) {
-      setAmount("");
-      return;
-    }
-
-    // Aplica formatação de reais com centavos
-    const formatted = formatReal(input);
-
-    setAmount(formatted);
   };
 
   return (
@@ -191,15 +153,20 @@ function PixTransactionScreen() {
               <div className={styles.iconContainer}>S$</div>
               <div className={styles.recipientDetails}>
                 <p className={styles.recipientName}>
-                  Pix para: <span className={styles.bold}>{pixData.receiverName}</span>
+                  Pix para:{" "}
+                  <span className={styles.bold}>{pixData.receiverName}</span>
                 </p>
                 <p className={styles.recipientId}>
                   CPF/CNPJ:{" "}
-                  <span className={styles.blurred}>{maskTaxId(pixData.taxIdNumber)}</span>
+                  <span className={styles.blurred}>
+                    {maskTaxId(pixData.taxIdNumber)}
+                  </span>
                 </p>
                 <p className={styles.recipientInstitution}>
                   Instituição:{" "}
-                  <span className={styles.blurred}>{pixData.destinationBank}</span>
+                  <span className={styles.blurred}>
+                    {pixData.destinationBank}
+                  </span>
                 </p>
               </div>
             </div>
@@ -220,8 +187,19 @@ function PixTransactionScreen() {
                 className={styles.amountInput}
                 placeholder="0,00"
                 value={amount}
-                onChange={handleAmountChange}
-                inputMode="numeric"
+                onChange={(e) => {
+                  let raw = e.target.value;
+
+                  raw = raw.replace(/[^\d,]/g, "");
+                  const parts = raw.split(",");
+                  if (parts.length > 2) return;
+
+                  if (parts[1]?.length > 2) {
+                    parts[1] = parts[1].slice(0, 2);
+                  }
+
+                  setAmount(parts.join(","));
+                }}
               />
             </div>
             <div className={styles.quickAmountScroll}>
@@ -257,7 +235,10 @@ function PixTransactionScreen() {
                     })}`
                   : ""}
               </span>
-              <button onClick={toggleBalanceVisibility} className={styles.eyeButton}>
+              <button
+                onClick={toggleBalanceVisibility}
+                className={styles.eyeButton}
+              >
                 {showBalance ? <FaEye /> : <FaEyeSlash />}
               </button>
             </div>
@@ -266,7 +247,9 @@ function PixTransactionScreen() {
           <section className={styles.scheduleSection}>
             <div className={styles.scheduleInfo}>
               <div className={styles.scheduleLabel}>Pra quando?</div>
-              <div className={styles.scheduleDate}>{getDataAtualFormatada()}</div>
+              <div className={styles.scheduleDate}>
+                {getDataAtualFormatada()}
+              </div>
             </div>
             <div className={styles.repeatWrapper}>
               <button className={styles.repeatButton}>Repetir</button>
@@ -275,7 +258,9 @@ function PixTransactionScreen() {
           </section>
 
           <section className={styles.descriptionSection}>
-            <label className={styles.descriptionLabel}>Descrição (opcional)</label>
+            <label className={styles.descriptionLabel}>
+              Descrição (opcional)
+            </label>
             <textarea
               className={styles.descriptionInput}
               placeholder="Digite uma observação sobre o Pix"
