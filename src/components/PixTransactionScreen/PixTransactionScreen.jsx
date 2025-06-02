@@ -75,7 +75,7 @@ function PixTransactionScreen() {
   const toggleBalanceVisibility = () => setShowBalance(!showBalance);
 
   const formatAmount = (valor) => {
-    const valorAtual = parseFloat(amount.replace(",", ".")) || 0;
+    const valorAtual = parseFloat(amount.replace(/\./g, "").replace(",", ".")) || 0;
     const novoValor = (valorAtual + valor).toFixed(2).replace(".", ",");
     setAmount(novoValor);
   };
@@ -84,14 +84,42 @@ function PixTransactionScreen() {
     const digits = value.replace(/\D/g, "");
 
     if (digits.length === 11) {
-      // CPF: ***.456.789-**
       return `***.${digits.slice(3, 6)}.${digits.slice(6, 9)}-**`;
     } else if (digits.length === 14) {
-      // CNPJ: **.***.456/2796-**
       return `**.***.${digits.slice(5, 8)}/${digits.slice(8, 12)}-**`;
     }
 
     return value;
+  };
+
+  const formatReal = (value) => {
+    if (!value) return "";
+    const numericValue = value.replace(/\D/g, "");
+    if (!numericValue) return "";
+
+    let intValue = parseInt(numericValue, 10);
+  
+    let formatted = (intValue / 100).toLocaleString("pt-BR", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+
+    return formatted;
+  };
+
+  const handleAmountChange = (e) => {
+    let input = e.target.value;
+
+    input = input.replace(/\D/g, "");
+
+    if (!input) {
+      setAmount("");
+      return;
+    }
+
+    const formatted = formatReal(input);
+
+    setAmount(formatted);
   };
 
   return (
@@ -187,19 +215,8 @@ function PixTransactionScreen() {
                 className={styles.amountInput}
                 placeholder="0,00"
                 value={amount}
-                onChange={(e) => {
-                  let raw = e.target.value;
-
-                  raw = raw.replace(/[^\d,]/g, "");
-                  const parts = raw.split(",");
-                  if (parts.length > 2) return;
-
-                  if (parts[1]?.length > 2) {
-                    parts[1] = parts[1].slice(0, 2);
-                  }
-
-                  setAmount(parts.join(","));
-                }}
+                onChange={handleAmountChange}
+                inputMode="numeric"
               />
             </div>
             <div className={styles.quickAmountScroll}>

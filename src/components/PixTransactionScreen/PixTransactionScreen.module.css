@@ -46,16 +46,17 @@ html {
 }
 
 h1 {
+  position: absolute;
   font-size: 20px;
   font-weight: bold;
-  margin-left: 55px;
-  margin-top: -23px;
+  margin-left: 50px;
+  top: -15px;
 }
 
 .backButton {
   position: absolute;
-  top: -10px;
-  left: 20px;
+  top: -40px;
+  left: 15px;
   color: white;
   font-size: 24px;
   z-index: 3;
@@ -408,4 +409,16 @@ h1 {
 .descriptionLabel {
   font-size: 20px;
   font-weight: bold;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0px 1000px white inset !important;
+  box-shadow: 0 0 0px 1000px white inset !important;
+  border-bottom: none !important; /* remove sublinhado */
+  border: none;
+  -webkit-text-fill-color: #000 !important;
+  transition: background-color 5000s ease-in-out 0s; /* hack para Chrome */
 }

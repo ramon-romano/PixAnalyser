@@ -98,6 +98,7 @@ function PixInputScreen() {
           <span className={styles.backArrow}>
             <IoIosArrowBack />
           </span>
+          <h2>Pix</h2>
           <h1>Como você quer transferir?</h1>
           <svg
             className="wave"
@@ -145,7 +146,7 @@ function PixInputScreen() {
             required
             placeholder=" "
             autoComplete="on"
-            className={pixKey ? "has-value" : ""}
+            className={pixKey ? "has-value" : ""} 
           />
           <label htmlFor="pixKey">Digitar ou colar nome/chave</label>
           {pixKey.trim() && (
