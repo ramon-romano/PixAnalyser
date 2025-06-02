@@ -1,20 +1,127 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./PixConfirmationScreen.module.css";
-import { Link } from "react-router-dom";
-import { FiFileText } from "react-icons/fi"; // Importe o ícone
+import { IoIosArrowBack } from "react-icons/io";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import AlertBanner from "../AlertBanner/AlertBanner";
+import { FiFileText } from "react-icons/fi";
+import { realizarTransferenciaPix } from "../../api/api";
 
 function PixConfirmationScreen() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [showBanner, setShowBanner] = useState(false);
+
+  const descricao = location.state?.descricao || "";
+
+  const dadosPix = location.state?.dadosPix || {};
+  const valor = location.state?.valor || "0,00";
+  const valorNumerico = parseFloat(valor.replace(".", "").replace(",", "."));
+
+  const pixData = JSON.parse(localStorage.getItem("consultaIA") || "{}");
+
+
+  const getDataAtualFormatada = () => {
+    const data = new Date();
+    const dia = String(data.getDate()).padStart(2, "0");
+    const mes = String(data.getMonth() + 1).padStart(2, "0");
+    const ano = data.getFullYear();
+    return `${dia}/${mes}/${ano}`;
+  };
+
+  const pixData = JSON.parse(localStorage.getItem("consultaIA") || "{}");
+  const requestTransaction = JSON.parse(
+    localStorage.getItem("requestTransaction") || "{}"
+  );
+
+  console.log(pixData.transactionInformation.receiverName);
+
+  const dadosPix = location.state?.dadosPix || {};
+
+
+  useEffect(() => {
+    if (!location.state || !location.state.valor) {
+      navigate("/valor");
+    }
+  }, [location, navigate]);
+
+  useEffect(() => {
+    if (pixData?.aiAnalyze?.confidenceScore < 0.7) {
+      setShowBanner(true);
+    }
+  }, []);
+
+  console.log(pixData);
+
+  const handleConfirmar = async () => {
+    setLoading(true);
+    setError("");
+
+    try {
+      const response = await realizarTransferenciaPix(
+        requestTransaction.destinationKeyValue,
+        requestTransaction.originClientId,
+        requestTransaction.amount,
+        requestTransaction.description
+      );
+
+      const resultadoTransferencia = response.data.body;
+
+      const success = response.data;
+
+      console.log("Ola", success);
+
+      if (success.statusCodeValue === 200) {
+        navigate("/sucesso", { state: { dados: dadosPix } });
+
+      } else {
+        setError(
+          resultadoTransferencia?.message || "Erro ao realizar a transferência."
+        );
+      }
+    } catch (err) {
+      console.error("Erro ao transferir pix:", err);
+      setError("Erro ao realizar a transferência.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Função para mascarar CPF/CNPJ parcialmente
+  const maskTaxId = (value) => {
+    const digits = value.replace(/\D/g, "");
+
+    if (digits.length === 11) {
+      // CPF: ***.456.789-**
+      return `***.${digits.slice(3, 6)}.${digits.slice(6, 9)}-**`;
+    } else if (digits.length === 14) {
+      // CNPJ: **.***.456/2796-**
+      return `**.***.${digits.slice(5, 8)}/${digits.slice(8, 12)}-**`;
+    }
+
+    return value;
+  };
+
+  // Função para mascarar a chave Pix — mostra só os 3 primeiros caracteres
+  const maskPixKey = (value) => {
+    if (!value) return "Chave não informada";
+    const visibleChars = 3;
+    const maskedLength = value.length - visibleChars;
+    if (maskedLength <= 0) return value;
+    return value.slice(0, visibleChars) + "*".repeat(maskedLength);
+  };
+
   return (
     <div className={styles.pixContainer}>
       <div className={styles.pixHeader}>
         <div className={styles.headerContent}>
-          <Link to="/conta" className={styles.backButton}>
-            &lt;
+          <Link to="/valor" className={styles.backButton}>
+            <IoIosArrowBack />
           </Link>
           <h1>Pix</h1>
+          <h2 className={styles.mainTitle}>Agora, é só confirmar</h2>
         </div>
-
-        <h2 className={styles.mainTitle}>Agora, é só confirmar</h2>
 
         <svg
           className={styles.wave}
@@ -57,25 +164,32 @@ function PixConfirmationScreen() {
             <FiFileText size={20} color="#777" style={{ marginRight: 8 }} />
             <span>Dados da transação</span>
           </div>
-          <div className={styles.detailItem}>
-            <span className={styles.label}>Nome</span>
-            <span className={styles.value}>Felipe Mariano</span>
+
+          <div className={styles.pixDetailItem}>
+            <span className={styles.pixLabel}>Nome</span>
+            <span className={styles.pixValue}>
+              {pixData.transactionInformation?.receiverName}
+            </span>
           </div>
-          <div className={styles.detailItem}>
-            <span className={styles.label}>Valor</span>
-            <span className={styles.value}>R$ 0,01</span>
+          <div className={styles.pixDetailItem}>
+            <span className={styles.pixLabel}>Valor</span>
+            <span className={styles.pixValue}>R$ {valor}</span>
           </div>
-          <div className={styles.detailItem}>
-            <span className={styles.label}>Chave Pix</span>
-            <span className={styles.value}>096.XXX.XXX-XX</span>
+          <div className={styles.pixDetailItem}>
+            <span className={styles.pixLabel}>Chave Pix</span>
+            <span className={`${styles.pixValue} ${styles.blurred}`}>
+              {maskPixKey(dadosPix.chave)}
+            </span>
           </div>
-          <div className={styles.detailItem}>
-            <span className={styles.label}>CPF/CNPJ</span>
-            <span className={styles.value}>096.***.***-**</span>
+          <div className={styles.pixDetailItem}>
+            <span className={styles.pixLabel}>CPF/CNPJ</span>
+            <span className={`${styles.pixValue} ${styles.blurred}`}>
+              {maskTaxId(dadosPix.documento) || "***.***.***-**"}
+            </span>
           </div>
-          <div className={styles.detailItem}>
-            <span className={styles.label}>Instituição</span>
-            <span className={styles.value}>PICPAY</span>
+          <div className={styles.pixDetailItem}>
+            <span className={styles.pixLabel}>Instituição</span>
+            <span className={styles.pixValue}>{dadosPix.instituicao}</span>
           </div>
         </div>
 
@@ -83,24 +197,42 @@ function PixConfirmationScreen() {
           <label className={styles.checkboxContainer}>
             <input type="checkbox" />
             <span className={styles.checkmark}></span>
-            <span className={styles.checkboxLabel}>
-              Adicionar aos contatos Pix
-            </span>
+            Adicionar aos contatos Pix
           </label>
         </div>
 
-        <div className={styles.paymentMethod}>
-          <span className={styles.label}>Debitar de</span>
-          <span className={styles.value}> Conta-Poupança</span>
+        <div className={styles.descriptionConfirm}>
+          <span>Observação:</span>
+          <p>{descricao || "Nenhuma observação foi inserida."}</p>
         </div>
 
-        <div className={styles.paymentDate}>
-          <span className={styles.label}>Data do débito</span>
-          <span className={styles.value}> 30/04/2025 - hoje</span>
+        <div className={styles.pixPaymentMethod}>
+          <span className={styles.pixLabel}>Debitar de</span>
+          <span className={styles.pixValue}> Conta-Poupança</span>
         </div>
 
-        <button className={styles.confirmButton}>Confirmar</button>
+        <div className={styles.pixPaymentDate}>
+          <span className={styles.pixLabel}>Data do débito</span>
+          <span className={styles.pixValue}>{getDataAtualFormatada()}</span>
+        </div>
+
+        {error && <div className={styles.errorMessage}>{error}</div>}
+
+        <button className={styles.confirmButton} onClick={handleConfirmar} disabled={loading}>
+          {loading ? "Processando..." : "Continuar"}
+        </button>
+
+        <Link to="/home" className={styles.cancelButton}>
+          Cancelar
+        </Link>
       </div>
+
+      {showBanner && (
+        <AlertBanner
+          message="Alerta: Individuo suspeito detectado!! Aconselhamos que prossiga, apenas se confiar no individuo."
+          onClose={() => setShowBanner(false)}
+        />
+      )}
     </div>
   );
 }

@@ -29,12 +29,14 @@ html {
     #cc092f 100%
   );
   overflow: visible;
-  padding-bottom: 30px;
+  padding-top: 60px;
+  padding-bottom: 80px;
   z-index: 0;
 }
 
 .headerContent {
   display: flex;
+  height: 100%;
   flex-direction: column;
   padding: 0 20px;
   margin: 0 auto;
@@ -45,10 +47,11 @@ html {
 }
 
 .backButton {
+  position: absolute;
   color: white;
   font-size: 24px;
   text-decoration: none;
-  margin-top: 20px;
+  bottom: 15px;
   display: flex;
   align-items: center;
 }
@@ -62,12 +65,10 @@ h1 {
 
 .mainTitle {
   color: white;
-  margin-top: 15px;
-  margin-bottom: 20px;
-  margin-left: 20px;
   font-size: 24px;
   font-weight: bold;
   text-align: left;
+  margin: 30px 0 0 20px;
 }
 
 .wave {
@@ -89,13 +90,13 @@ h1 {
   display: flex;
   gap: 14px;
   align-items: center;
-  margin: -55px auto 0 auto; /* Aumentei ainda mais a margem superior negativa */
+  margin: -45px auto 0 auto;
   position: relative;
   z-index: 5;
-  width: 80%; /* Diminuí a largura */
-  max-width: 300px; /* Diminuí a largura máxima */
+  width: 80%;
+  max-width: 300px;
   flex-direction: column;
-  transform: translateY(30px); /* Deslocamento vertical de 15px */
+  transform: translateY(30px);
 }
 
 .transactionDetails {
@@ -111,11 +112,7 @@ h1 {
   font-weight: bold;
 }
 
-.detailsHeader svg {
-  margin-right: 8px;
-}
-
-.detailItem {
+.pixDetailItem {
   display: flex;
   justify-content: space-between;
   padding: 10px 0;
@@ -124,33 +121,28 @@ h1 {
   width: 100%;
 }
 
-.detailItem:last-child {
+.pixDetailItem:last-child {
   border-bottom: none;
 }
 
-.detailItem .label {
+.pixLabel {
   color: #777;
 }
 
-.detailItem .value {
+.pixValue {
   color: #333;
   font-weight: 500;
 }
 
-.options {
-  width: 100%;
-  margin-bottom: 20px;
-  padding: 0;
-}
-
 .checkboxContainer {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  display: block;
+  position: relative;
+  padding-left: 35px;
+  margin-bottom: 15px;
   cursor: pointer;
   font-size: 16px;
+  user-select: none;
   color: #555;
-  min-height: 22px;
 }
 
 .checkboxContainer input {
@@ -162,15 +154,14 @@ h1 {
 }
 
 .checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
   height: 22px;
   width: 22px;
   background-color: #eee;
   border-radius: 4px;
   border: 1px solid #ccc;
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 .checkboxContainer:hover input ~ .checkmark {
@@ -199,21 +190,19 @@ h1 {
   height: 12px;
   border: solid white;
   border-width: 0 3px 3px 0;
-  -webkit-transform: rotate(45deg);
-  -ms-transform: rotate(45deg);
   transform: rotate(45deg);
 }
 
-.paymentMethod,
-.paymentDate {
+.pixPaymentMethod,
+.pixPaymentDate {
   padding: 10px 0;
   color: #555;
   font-size: 16px;
   width: 100%;
 }
 
-.paymentMethod .value,
-.paymentDate .value {
+.pixPaymentMethod .pixValue,
+.pixPaymentDate .pixValue {
   font-weight: 500;
   color: #333;
 }
@@ -235,6 +224,41 @@ h1 {
   background-color: #9e0202;
 }
 
-.navigationBar {
-  display: none;
+.cancelButton {
+  display: block;
+  text-align: center;
+  margin-top: 10px;
+  color: #cc092f;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.options {
+  width: 100%;
+  padding: 0;
+}
+
+.descriptionConfirm {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.descriptionConfirm span {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 6px;
+  color: #444;
+}
+
+.descriptionConfirm p {
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  word-wrap: break-word;
+  background-color: #c4c4c4;
+  border-radius: 5px;
+  padding: 5px;
+  white-space: pre-wrap;
+  font-size: 15px;
+  color: #333;
 }
