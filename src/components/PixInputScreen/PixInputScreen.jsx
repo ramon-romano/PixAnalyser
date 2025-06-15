@@ -98,7 +98,6 @@ function PixInputScreen() {
           <span className={styles.backArrow}>
             <IoIosArrowBack />
           </span>
-          <h2>Pix</h2>
           <h1>Como você quer transferir?</h1>
           <svg
             className="wave"
