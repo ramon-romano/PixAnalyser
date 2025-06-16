@@ -27,6 +27,13 @@ function PixConfirmationScreen() {
     localStorage.getItem("requestTransaction") || "{}"
   );
 
+  function mascararDocumento(doc) {
+    if (!doc) return "";
+    const primeiros = doc.slice(0, 3);
+    const mascarado = "*".repeat(doc.length - 3);
+    return primeiros + mascarado;
+  }
+
   console.log(pixData.transactionInformation.receiverName);
 
   const dadosPix = location.state?.dadosPix || {};
@@ -142,14 +149,14 @@ function PixConfirmationScreen() {
           </div>
           <div className={styles.detailItem}>
             <span className={styles.label}>Chave Pix</span>
-            <span className={`${styles.value} ${styles.blurred}`}>
+            <span className={`${styles.value} `}>
               {dadosPix.chave || "XXX.XXX.XXX-XX"}
             </span>
           </div>
           <div className={styles.detailItem}>
             <span className={styles.label}>CPF/CNPJ</span>
-            <span className={`${styles.value} ${styles.blurred}`}>
-              {dadosPix.documento || "***.***.***-**"}
+            <span className={styles.value}>
+              {mascararDocumento(dadosPix.documento) || "***.***.***-**"}
             </span>
           </div>
           <div className={styles.detailItem}>
