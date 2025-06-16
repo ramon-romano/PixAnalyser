@@ -48,23 +48,23 @@ function PixSuccessfulScreen() {
         </div>
 
         <div className={styles["actions-area"]}>
-          <button className={styles["action-button"]}>
+          <Link to="/home" className={styles["action-button"]}>
             <IoShareOutline className={styles["action-icon"]} />
             <span className={styles["action-label"]}>
               Compartilhar comprovante
             </span>
             <IoIosArrowForward className={styles["action-arrow"]} />
-          </button>
-          <button className={styles["action-button"]}>
+          </Link>
+          <Link to="/home" className={styles["action-button"]}>
             <FaPix className={styles["pix-icon-container"]} />
             <span className={styles["action-label"]}>Fazer outro Pix</span>
             <IoIosArrowForward className={styles["action-arrow"]} />
-          </button>
-          <button className={styles["action-button"]}>
+          </Link>
+          <Link to="/home" className={styles["action-button"]}>
             <IoHomeOutline className={styles["action-icon"]} />
             <span className={styles["action-label"]}>Voltar ao início</span>
             <IoIosArrowForward className={styles["action-arrow"]} />
-          </button>
+          </Link>
         </div>
       </div>
     </div>
