@@ -67,12 +67,6 @@ function PixSuccessfulScreen() {
           </button>
         </div>
       </div>
-
-      <div className={styles["navigation-dots"]}>
-        <div className={styles["nav-dot"]}></div>
-        <div className={`${styles["nav-dot"]} ${styles.active}`}></div>
-        <div className={styles["nav-dot"]}></div>
-      </div>
     </div>
   );
 }
