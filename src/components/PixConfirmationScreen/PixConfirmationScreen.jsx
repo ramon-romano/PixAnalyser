@@ -68,8 +68,6 @@ function PixConfirmationScreen() {
 
       const success = response.data;
 
-      console.log("Ola", success);
-
       if (success.statusCodeValue === 200) {
         navigate("/sucesso", { state: { dados: dadosPix } });
       } else {
