@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import styles from "./PixKeyInfoScreen.module.css";
 import { IoIosArrowBack } from "react-icons/io";
 import { FiCopy } from "react-icons/fi";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 
 function UserCard({ user }) {
@@ -93,7 +93,6 @@ export default function PixKeyInfoScreen() {
         if (!res) throw new Error("Resposta vazia");
 
         const dados = res.data.body;
-        console.log(dados, "qualquer coisa");
 
         if (Array.isArray(dados) && dados.length) setUsers(dados);
         else setError("Nenhum usuário encontrado.");
@@ -111,10 +110,10 @@ export default function PixKeyInfoScreen() {
     <div className={styles.pixContainer}>
       <div className={styles.pixHeader}>
         <div className={styles.pixGradient}>
-          <span className={styles.backArrow} onClick={() => navigate(-1)}>
+          <span className={styles.backArrow} onClick={() => navigate('/input')}>
             <IoIosArrowBack />
           </span>
-          <h1>Pix Analyzer</h1>
+          <h1 className={styles.projectName}>Pix Analyzer</h1>
 
            <svg
     className={styles.wave}
@@ -192,6 +191,16 @@ export default function PixKeyInfoScreen() {
                 <UserCard key={i} user={user} />
               ))}
             </div>
+
+            <div className={styles.footerButtonWrapper}>
+  <button
+    className={styles.confirmButton}
+    onClick={() => navigate("/input")} // ajuste a rota conforme necessário
+  >
+    Continuar
+  </button>
+</div>
+
           </>
         )}
       </div>

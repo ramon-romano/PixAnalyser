@@ -98,7 +98,7 @@ function PixTransactionScreen() {
     <div className={styles.pixContainer}>
       <div className={styles.pixHeader}>
         <div className={styles.headerContent}>
-          <Link to="/home" className={styles.backButton}>
+          <Link to="/input" className={styles.backButton}>
             <IoIosArrowBack />
           </Link>
           <h1>Pix</h1>

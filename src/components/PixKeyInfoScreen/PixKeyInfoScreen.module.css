@@ -38,6 +38,7 @@
   cursor: pointer;
   z-index: 3;
 }
+
 .wave {
   position: absolute;
   bottom: 0;
@@ -124,3 +125,35 @@
   padding-left: 15px;
   cursor: pointer;
 }
+
+.confirmButton {
+  background-color: #cc092f;
+  color: white;
+  padding: 1rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  width: 100%;
+  max-width: 300px;
+  margin: 1.5rem auto;
+  display: block;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  
+}
+
+.confirmButton:hover {
+  background-color: #a20726;
+}
+
+.footerButtonWrapper {
+  position: sticky;
+  bottom: 0;
+  background-color: transparent; /* remove fundo branco */
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  z-index: 10; /* mantém acima de outros elementos se necessário */
+}
+
+
