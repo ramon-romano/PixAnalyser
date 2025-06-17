@@ -18,41 +18,49 @@ function PixInputScreen() {
       return digits.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
     }
     if (/^\d{14}$/.test(digits)) {
-      return digits.replace(
-        /(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/,
-        "$1.$2.$3/$4-$5"
-      );
+      return digits.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, "$1.$2.$3/$4-$5");
     }
     if (/^\d{12}$/.test(digits)) {
-    // Telefone com DDI (ex: 55DD9XXXXXXX)
-    return digits.replace(/(\d{2})(\d{2})(\d{4})(\d{4})/, "+$1 ($2) $3-$4");
-  }
-    return value;
+      return digits.replace(/(\d{2})(\d{2})(\d{4})(\d{4})/, "+$1 ($2) $3-$4");
+    }
+    return value; // Não formatar e-mail ou EVP
   };
 
- const getCleanedPixKey = (key) => {
-    const digits = key.replace(/\D/g, "");
+  const getCleanedPixKey = (key) => {
+    const trimmedKey = key.trim();
 
-    if (
-      /^\d{11}$/.test(digits)  || // CPF
-      /^\d{14}$/.test(digits)  || // CNPJ
-      /^\d{12}$/.test(digits)     // Telefone com 12 dígitos (ex: 55 + DDD + número)
-    ) {
-      return digits;
+    // CPF
+    const cpf = trimmedKey.replace(/\D/g, "");
+    if (/^\d{11}$/.test(cpf)) return cpf;
+
+    // CNPJ
+    const cnpj = trimmedKey.replace(/\D/g, "");
+    if (/^\d{14}$/.test(cnpj)) return cnpj;
+
+    // Telefone com DDI
+    const phone = trimmedKey.replace(/\D/g, "");
+    if (/^\d{12}$/.test(phone)) return phone;
+
+    // E-mail
+    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedKey)) return trimmedKey;
+
+    // EVP (UUID)
+    if (/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(trimmedKey)) {
+      return trimmedKey;
     }
-  }
+
+    return null;
+  };
 
   const handleChange = (e) => {
     const input = e.target.value;
-    const digits = input.replace(/\D/g, "");
-    setPixKey(formatPixKey(digits));
+    setPixKey(formatPixKey(input));
   };
 
   const handlePaste = (e) => {
     e.preventDefault();
     const pasteData = e.clipboardData.getData("text");
-    const digits = pasteData.replace(/\D/g, "");
-    setPixKey(formatPixKey(digits));
+    setPixKey(formatPixKey(pasteData));
   };
 
   const handleContinue = async () => {
@@ -68,10 +76,7 @@ function PixInputScreen() {
       amount: null,
       description: null,
     };
-    localStorage.setItem(
-      "requestTransaction",
-      JSON.stringify(requestTransaction)
-    );
+    localStorage.setItem("requestTransaction", JSON.stringify(requestTransaction));
 
     try {
       const response = await buscarDadosDaChavePix(
@@ -110,45 +115,45 @@ function PixInputScreen() {
         <div className={styles.pixGradient}>
           <span
             className={styles.backArrow}
-            onClick={() => navigate('/home')}  // <-- Botão de voltar corrigido aqui
+            onClick={() => navigate("/home")}
             style={{ cursor: "pointer" }}
           >
             <IoIosArrowBack />
           </span>
           <h1>Como você quer transferir?</h1>
-            <svg
-              className={styles.wave}
-              viewBox="0 0 1440 120"
-              preserveAspectRatio="none"
-              xmlns="http://www.w3.org/2000/svg"
-              style={{
-                position: "absolute",
-                bottom: "-50px",
-                left: 0,
-                width: "100%",
-                height: "70px",
-                transform: "rotate(180deg)",
-                zIndex: 1,
-                pointerEvents: "none",
-              }}
-            >
-              <g transform="translate(70, 0)">
-                <path
-                  d="M0,150 Q720,-150 1440,175 L1440,120 L0,120 Z"
-                  fill="rgba(227, 60, 79, 0.3)"
-                />
-              </g>
-              <g transform="translate(300, 0)">
-                <path
-                  d="M0,155 Q720,-120 1440,130 L1440,120 L0,120 Z"
-                  fill="rgba(227, 60, 79, 0.3)"
-                />
-              </g>
+          <svg
+            className={styles.wave}
+            viewBox="0 0 1440 120"
+            preserveAspectRatio="none"
+            xmlns="http://www.w3.org/2000/svg"
+            style={{
+              position: "absolute",
+              bottom: "-50px",
+              left: 0,
+              width: "100%",
+              height: "70px",
+              transform: "rotate(180deg)",
+              zIndex: 1,
+              pointerEvents: "none",
+            }}
+          >
+            <g transform="translate(70, 0)">
               <path
-                d="M0,29  Q360,-10 720,30  Q1080,70 1440,40  L1440,120  L0,120  Z"
-                fill="rgba(204, 9, 47, 0.97)"
+                d="M0,150 Q720,-150 1440,175 L1440,120 L0,120 Z"
+                fill="rgba(227, 60, 79, 0.3)"
               />
-            </svg>
+            </g>
+            <g transform="translate(300, 0)">
+              <path
+                d="M0,155 Q720,-120 1440,130 L1440,120 L0,120 Z"
+                fill="rgba(227, 60, 79, 0.3)"
+              />
+            </g>
+            <path
+              d="M0,29  Q360,-10 720,30  Q1080,70 1440,40  L1440,120  L0,120  Z"
+              fill="rgba(204, 9, 47, 0.97)"
+            />
+          </svg>
         </div>
       </div>
 

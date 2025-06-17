@@ -144,9 +144,11 @@ function PixConfirmationScreen() {
             </span>
           </div>
           <div className={styles.detailItem}>
-            <span className={styles.label}>Valor</span>
-            <span className={styles.value}>R$ {valor}</span>
-          </div>
+  <span className={styles.label}>Valor</span>
+  <span className={styles.value}>
+    R$ {Number(valor).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+  </span>
+</div>
           <div className={styles.detailItem}>
             <span className={styles.label}>Chave Pix</span>
             <span className={`${styles.value} ${styles.blurred}`}>

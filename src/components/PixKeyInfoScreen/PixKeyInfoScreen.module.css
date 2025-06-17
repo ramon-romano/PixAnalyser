@@ -38,6 +38,12 @@
   cursor: pointer;
   z-index: 3;
 }
+.projectName{
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  margin-left: 0;
+}
 
 .wave {
   position: absolute;
