@@ -23,23 +23,36 @@ function PixInputScreen() {
         "$1.$2.$3/$4-$5"
       );
     }
+    if (/^\d{12}$/.test(digits)) {
+    // Telefone com DDI (ex: 55DD9XXXXXXX)
+    return digits.replace(/(\d{2})(\d{2})(\d{4})(\d{4})/, "+$1 ($2) $3-$4");
+  }
     return value;
   };
 
-  const getCleanedPixKey = (key) => {
-    const trimmed = key.trim();
+ const getCleanedPixKey = (key) => {
+    const digits = key.replace(/\D/g, "");
+
     if (
-      /^\d{11}$/.test(trimmed.replace(/\D/g, "")) ||
-      /^\d{14}$/.test(trimmed.replace(/\D/g, ""))
+      /^\d{11}$/.test(digits)  || // CPF
+      /^\d{14}$/.test(digits)  || // CNPJ
+      /^\d{12}$/.test(digits)     // Telefone com 12 dígitos (ex: 55 + DDD + número)
     ) {
-      return trimmed.replace(/\D/g, "");
+      return digits;
     }
-    return trimmed;
-  };
+  }
 
   const handleChange = (e) => {
     const input = e.target.value;
-    setPixKey(formatPixKey(input));
+    const digits = input.replace(/\D/g, "");
+    setPixKey(formatPixKey(digits));
+  };
+
+  const handlePaste = (e) => {
+    e.preventDefault();
+    const pasteData = e.clipboardData.getData("text");
+    const digits = pasteData.replace(/\D/g, "");
+    setPixKey(formatPixKey(digits));
   };
 
   const handleContinue = async () => {
@@ -95,43 +108,47 @@ function PixInputScreen() {
     <div className={styles.pixContainer}>
       <div className={styles.pixHeader}>
         <div className={styles.pixGradient}>
-          <span className={styles.backArrow}>
+          <span
+            className={styles.backArrow}
+            onClick={() => navigate('/home')}  // <-- Botão de voltar corrigido aqui
+            style={{ cursor: "pointer" }}
+          >
             <IoIosArrowBack />
           </span>
           <h1>Como você quer transferir?</h1>
-          <svg
-            className="wave"
-            viewBox="0 0 1440 120"
-            preserveAspectRatio="none"
-            xmlns="http://www.w3.org/2000/svg"
-            style={{
-              position: "absolute",
-              bottom: "-50px",
-              left: 0,
-              width: "100%",
-              height: "70px",
-              transform: "rotate(180deg)",
-              zIndex: 1,
-              pointerEvents: "none",
-            }}
-          >
-            <g transform="translate(70, 0)">
+            <svg
+              className={styles.wave}
+              viewBox="0 0 1440 120"
+              preserveAspectRatio="none"
+              xmlns="http://www.w3.org/2000/svg"
+              style={{
+                position: "absolute",
+                bottom: "-50px",
+                left: 0,
+                width: "100%",
+                height: "70px",
+                transform: "rotate(180deg)",
+                zIndex: 1,
+                pointerEvents: "none",
+              }}
+            >
+              <g transform="translate(70, 0)">
+                <path
+                  d="M0,150 Q720,-150 1440,175 L1440,120 L0,120 Z"
+                  fill="rgba(227, 60, 79, 0.3)"
+                />
+              </g>
+              <g transform="translate(300, 0)">
+                <path
+                  d="M0,155 Q720,-120 1440,130 L1440,120 L0,120 Z"
+                  fill="rgba(227, 60, 79, 0.3)"
+                />
+              </g>
               <path
-                d="M0,150 Q720,-150 1440,175 L1440,120 L0,120 Z"
-                fill="rgba(227, 60, 79, 0.3)"
+                d="M0,29  Q360,-10 720,30  Q1080,70 1440,40  L1440,120  L0,120  Z"
+                fill="rgba(204, 9, 47, 0.97)"
               />
-            </g>
-            <g transform="translate(300, 0)">
-              <path
-                d="M0,155 Q720,-120 1440,130 L1440,120 L0,120 Z"
-                fill="rgba(227, 60, 79, 0.3)"
-              />
-            </g>
-            <path
-              d="M0,29  Q360,-10 720,30  Q1080,70 1440,40  L1440,120  L0,120  Z"
-              fill="rgba(204, 9, 47, 0.97)"
-            />
-          </svg>
+            </svg>
         </div>
       </div>
 
@@ -142,6 +159,7 @@ function PixInputScreen() {
             id="pixKey"
             value={pixKey}
             onChange={handleChange}
+            onPaste={handlePaste}
             required
             placeholder=" "
             autoComplete="on"
