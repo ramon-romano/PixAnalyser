@@ -199,7 +199,18 @@ function PixConfirmationScreen() {
       </div>
       {showBanner && (
         <AlertBanner
-          message="Alerta: Individuo suspeito detectado!! Aconselhamos que prossiga, apenas se confiar no individuo."
+          message={
+            <>
+              <strong>⚠️ Alerta: Chave Pix considerada suspeita!</strong><br />
+              Motivos:
+              <ul>
+                {pixData.aiAnalyze.fraudReasons.map((reason, index) => (
+                  <li key={index}>{reason}</li>
+                ))}
+              </ul>
+              Recomendamos prosseguir apenas se você conhecer e confiar no destinatário.
+            </>
+          }
           onClose={() => setShowBanner(false)}
         />
       )}
