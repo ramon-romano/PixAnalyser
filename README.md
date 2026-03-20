@@ -53,6 +53,49 @@ Com o crescimento do uso do Pix no Brasil, também aumentaram os golpes e fraude
 
 ---
 
+## Rodando o frontend (Vite)
+
+1) Instale dependências:
+
+```bash
+npm ci
+```
+
+2) Rode em modo dev:
+
+```bash
+npm run dev
+```
+
+---
+
+## Modo mock (sem backend)
+
+O frontend consegue responder com dados mockados quando:
+
+- `VITE_USE_MOCKS=true` (força mock), ou
+- em `DEV`, se houver erro de rede na API (fallback automático).
+
+### PowerShell (Windows)
+
+```powershell
+$env:VITE_USE_MOCKS='true'
+npm.cmd run dev
+```
+
+### Bash (macOS/Linux)
+
+```bash
+VITE_USE_MOCKS=true npm run dev
+```
+
+Chaves sugeridas para testar:
+
+- `12345678900` (score alto)
+- `12345678000` (score baixo e mostra alerta na confirmação)
+
+---
+
 ## 📡 Exemplo de Requisição
 
 ### Endpoint
